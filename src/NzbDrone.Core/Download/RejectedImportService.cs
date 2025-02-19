@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Core.Download.TrackedDownloads;
@@ -24,7 +25,7 @@ public class RejectedImportService : IRejectedImportService
 
     public bool Process(TrackedDownload trackedDownload, ImportResult importResult)
     {
-        if (importResult.Result != ImportResultType.Rejected || trackedDownload.RemoteEpisode?.Release == null)
+        if (importResult.Result != ImportResultType.Rejected || importResult.ImportDecision.LocalEpisode == null || trackedDownload.RemoteEpisode?.Release == null)
         {
             return false;
         }
@@ -34,7 +35,7 @@ public class RejectedImportService : IRejectedImportService
 
         if (indexerSettings == null)
         {
-            trackedDownload.Warn(new TrackedDownloadStatusMessage(trackedDownload.DownloadItem.Title, importResult.Errors));
+            trackedDownload.Warn(new TrackedDownloadStatusMessage(importResult.Errors.First(), new List<string>()));
             return true;
         }
 
