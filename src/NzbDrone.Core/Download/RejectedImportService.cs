@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using NzbDrone.Core.Download.TrackedDownloads;
@@ -35,7 +34,7 @@ public class RejectedImportService : IRejectedImportService
 
         if (indexerSettings == null)
         {
-            trackedDownload.Warn(new TrackedDownloadStatusMessage(importResult.Errors.First(), new List<string>()));
+            trackedDownload.Warn(new TrackedDownloadStatusMessage(trackedDownload.DownloadItem.Title, importResult.Errors));
             return true;
         }
 
