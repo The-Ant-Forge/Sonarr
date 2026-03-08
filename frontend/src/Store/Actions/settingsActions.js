@@ -11,7 +11,6 @@ import importListExclusions from './Settings/importListExclusions';
 import importListOptions from './Settings/importListOptions';
 import importLists from './Settings/importLists';
 import indexerFlags from './Settings/indexerFlags';
-import indexerOptions from './Settings/indexerOptions';
 
 export * from './Settings/autoTaggingSpecifications';
 export * from './Settings/autoTaggings';
@@ -24,7 +23,6 @@ export * from './Settings/importListOptions';
 export * from './Settings/importLists';
 export * from './Settings/importListExclusions';
 export * from './Settings/indexerFlags';
-export * from './Settings/indexerOptions';
 
 //
 // Variables
@@ -46,8 +44,7 @@ export const defaultState = {
   importLists: importLists.defaultState,
   importListExclusions: importListExclusions.defaultState,
   importListOptions: importListOptions.defaultState,
-  indexerFlags: indexerFlags.defaultState,
-  indexerOptions: indexerOptions.defaultState,
+  indexerFlags: indexerFlags.defaultState
 };
 
 export const persistState = ['settings.importListExclusions.pageSize'];
@@ -66,28 +63,23 @@ export const actionHandlers = handleThunks({
   ...importLists.actionHandlers,
   ...importListExclusions.actionHandlers,
   ...importListOptions.actionHandlers,
-  ...indexerFlags.actionHandlers,
-  ...indexerOptions.actionHandlers,
+  ...indexerFlags.actionHandlers
 });
 
 //
 // Reducers
 
-export const reducers = createHandleActions(
-  {
-    ...autoTaggingSpecifications.reducers,
-    ...autoTaggings.reducers,
-    ...customFormatSpecifications.reducers,
-    ...customFormats.reducers,
-    ...delayProfiles.reducers,
-    ...downloadClients.reducers,
-    ...downloadClientOptions.reducers,
-    ...importLists.reducers,
-    ...importListExclusions.reducers,
-    ...importListOptions.reducers,
-    ...indexerFlags.reducers,
-    ...indexerOptions.reducers,
-  },
-  defaultState,
-  section
-);
+export const reducers = createHandleActions({
+  ...autoTaggingSpecifications.reducers,
+  ...autoTaggings.reducers,
+  ...customFormatSpecifications.reducers,
+  ...customFormats.reducers,
+  ...delayProfiles.reducers,
+  ...downloadClients.reducers,
+  ...downloadClientOptions.reducers,
+  ...importLists.reducers,
+  ...importListExclusions.reducers,
+  ...importListOptions.reducers,
+  ...indexerFlags.reducers
+
+}, defaultState, section);

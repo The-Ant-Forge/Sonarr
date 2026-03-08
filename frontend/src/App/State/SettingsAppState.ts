@@ -16,7 +16,6 @@ import ImportListExclusion from 'typings/ImportListExclusion';
 import ImportListOptionsSettings from 'typings/ImportListOptionsSettings';
 import IndexerFlag from 'typings/IndexerFlag';
 import DownloadClientOptions from 'typings/Settings/DownloadClientOptions';
-import IndexerOptions from 'typings/Settings/IndexerOptions';
 
 type Presets<T> = T & {
   presets: T[];
@@ -62,9 +61,6 @@ export interface ImportListAppState
   isTestingAll: boolean;
 }
 
-export interface IndexerOptionsAppState
-  extends AppSectionItemState<IndexerOptions>, AppSectionSaveState {}
-
 export interface CustomFormatAppState
   extends
     AppSectionState<CustomFormat>,
@@ -104,7 +100,6 @@ interface SettingsAppState {
   importListOptions: ImportListOptionsSettingsAppState;
   importLists: ImportListAppState;
   indexerFlags: IndexerFlagSettingsAppState;
-  indexerOptions: IndexerOptionsAppState;
 }
 
 export default SettingsAppState;
