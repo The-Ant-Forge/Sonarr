@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import persistState from 'redux-localstorage';
 import actions from 'Store/Actions';
 import migrate from 'Store/Migrators/migrate';
 
@@ -64,16 +63,14 @@ function mergeColumns(path, initialState, persistedState, computedState) {
   _.set(computedState, path, columns);
 }
 
-function slicer(paths_) {
-  return (state) => {
-    const subset = {};
+function slicerFn(state) {
+  const subset = {};
 
-    paths_.forEach((path) => {
-      _.set(subset, path, _.get(state, path));
-    });
+  paths.forEach((path) => {
+    _.set(subset, path, _.get(state, path));
+  });
 
-    return subset;
-  };
+  return subset;
 }
 
 function serialize(obj) {
@@ -97,25 +94,52 @@ function merge(initialState, persistedState) {
 }
 
 const KEY = 'sonarr';
+const storageKey = window.Sonarr.instanceName.toLowerCase().replace(/ /g, '_') || KEY;
 
-const config = {
-  slicer,
-  serialize,
-  merge,
-  key: window.Sonarr.instanceName.toLowerCase().replace(/ /g, '_') || KEY
-};
-
+// Store enhancer that syncs a subset of Redux state to localStorage.
+// Replaces the redux-localstorage package with an inline implementation.
 export default function createPersistState() {
   // Migrate existing local storage value to new key if it does not already exist.
   // Leave old value as-is in case there are multiple instances using the same key.
-  if (config.key !== KEY && localStorage.getItem(KEY) && !localStorage.getItem(config.key)) {
-    localStorage.setItem(config.key, localStorage.getItem(KEY));
+  if (storageKey !== KEY && localStorage.getItem(KEY) && !localStorage.getItem(storageKey)) {
+    localStorage.setItem(storageKey, localStorage.getItem(KEY));
   }
 
   // Migrate existing local storage before proceeding
-  const persistedState = JSON.parse(localStorage.getItem(config.key));
-  migrate(persistedState);
-  localStorage.setItem(config.key, serialize(persistedState));
+  const existingState = JSON.parse(localStorage.getItem(storageKey));
+  migrate(existingState);
+  localStorage.setItem(storageKey, serialize(existingState));
 
-  return persistState(paths, config);
+  return (next) => (reducer, initialState, enhancer) => {
+    if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+      enhancer = initialState;
+      initialState = undefined;
+    }
+
+    let persistedState;
+    let finalInitialState;
+
+    try {
+      persistedState = JSON.parse(localStorage.getItem(storageKey));
+      finalInitialState = merge(initialState, persistedState);
+    } catch (e) {
+      console.warn('Failed to retrieve state from localStorage:', e);
+      finalInitialState = initialState;
+    }
+
+    const store = next(reducer, finalInitialState, enhancer);
+
+    store.subscribe(() => {
+      const state = store.getState();
+      const subset = slicerFn(state);
+
+      try {
+        localStorage.setItem(storageKey, serialize(subset));
+      } catch (e) {
+        console.warn('Unable to persist state to localStorage:', e);
+      }
+    });
+
+    return store;
+  };
 }
