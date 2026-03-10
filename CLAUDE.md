@@ -55,13 +55,22 @@ dotnet run --project src/NzbDrone.Console/Sonarr.Console.csproj
 App runs at http://localhost:8989
 
 ## Local Testing Deployment
-A live Sonarr instance is installed at `D:\Dev\Sonarr`.
 
-| Build output | Description |
+**Installation directory:** `D:\Apps\Sonarr` — a configured Sonarr instance with database, config, and indexers already set up. Deploy build output here for smoke testing.
+
+| Path | Description |
 |---|---|
-| `_output/net10.0/` | Backend DLLs |
-| `_output/UI/` | Frontend assets |
+| `D:\Apps\Sonarr/` | Live installation (preserve `config.xml`, `sonarr.db`, `logs.db`, `Backups/`, `logs/`) |
+| `_output/net10.0/` | Backend DLLs (copy to install dir root) |
+| `_output/UI/` | Frontend assets (copy to install dir as `UI/`) |
 | `_tests/net10.0/` | Test assemblies |
+
+**Deploy & run:**
+```bash
+bash deploy.sh --clean                                           # deploy build output
+"D:\Apps\Sonarr\Sonarr.Console.exe" -data="D:\Apps\Sonarr"      # start (port 9103)
+```
+Web UI: http://localhost:9103 | API key: see `D:\Apps\Sonarr\config.xml`
 
 ## Linting (required before committing frontend changes)
 ```bash

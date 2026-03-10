@@ -127,7 +127,7 @@ function Modal({
         if (isIOS()) {
           setScrollLock(true);
           bodyScrollTop.current = document.body.scrollTop;
-          document.body.classList.add(styles.modalOpenIOS);
+          document.body.classList.add(styles.modalOpenIos);
         } else {
           document.body.classList.add(styles.modalOpen);
         }
@@ -139,7 +139,7 @@ function Modal({
         setScrollLock(false);
 
         if (isIOS()) {
-          document.body.classList.remove(styles.modalOpenIOS);
+          document.body.classList.remove(styles.modalOpenIos);
           document.body.scrollTop = bodyScrollTop.current;
         } else {
           document.body.classList.remove(styles.modalOpen);
