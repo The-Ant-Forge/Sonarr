@@ -19,7 +19,7 @@ namespace NzbDrone.Test.Common
     public class NzbDroneRunner
     {
         private readonly IProcessProvider _processProvider;
-        private readonly IRestClient _restClient;
+        private readonly RestClient _restClient;
         private Process _nzbDroneProcess;
 
         public string AppData { get; private set; }
@@ -83,7 +83,7 @@ namespace NzbDrone.Test.Common
                     return;
                 }
 
-                TestContext.Progress.WriteLine("Waiting for Sonarr to start. Response Status : {0}  [{1}] {2}", statusCall.ResponseStatus, statusCall.StatusDescription, statusCall.ErrorException.Message);
+                TestContext.Progress.WriteLine("Waiting for Sonarr to start. Response Status : {0}  [{1}] {2}", statusCall.ResponseStatus, statusCall.StatusCode, statusCall.ErrorException?.Message);
 
                 Thread.Sleep(500);
             }

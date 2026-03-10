@@ -289,7 +289,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
 
             var result = await Subject.Download(remoteEpisode, CreateIndexer());
 
-            Assert.IsFalse(result.Any(c => char.IsLower(c)));
+            result.Any(c => char.IsLower(c)).Should().BeFalse();
         }
 
         [Test]
@@ -303,7 +303,7 @@ namespace NzbDrone.Core.Test.Download.DownloadClientTests.HadoukenTests
 
             var result = await Subject.Download(remoteEpisode, CreateIndexer());
 
-            Assert.IsFalse(result.Any(c => char.IsLower(c)));
+            result.Any(c => char.IsLower(c)).Should().BeFalse();
         }
 
         [Test]

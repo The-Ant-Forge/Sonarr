@@ -6,7 +6,7 @@ namespace NzbDrone.Integration.Test.Client
 {
     public class EpisodeClient : ClientBase<EpisodeResource>
     {
-        public EpisodeClient(IRestClient restClient, string apiKey)
+        public EpisodeClient(RestClient restClient, string apiKey)
             : base(restClient, apiKey, "episode")
         {
         }

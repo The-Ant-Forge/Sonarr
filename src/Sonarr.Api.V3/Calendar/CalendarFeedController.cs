@@ -77,12 +77,13 @@ namespace Sonarr.Api.V3.Calendar
 
                 if (asAllDay)
                 {
-                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value.ToLocalTime()) { HasTime = false };
+                    var airDate = episode.AirDateUtc.Value.ToLocalTime();
+                    occurrence.Start = new CalDateTime(airDate.Year, airDate.Month, airDate.Day);
                 }
                 else
                 {
-                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value) { HasTime = true };
-                    occurrence.End = new CalDateTime(episode.AirDateUtc.Value.AddMinutes(series.Runtime)) { HasTime = true };
+                    occurrence.Start = new CalDateTime(episode.AirDateUtc.Value);
+                    occurrence.End = new CalDateTime(episode.AirDateUtc.Value.AddMinutes(series.Runtime));
                 }
 
                 switch (series.SeriesType)

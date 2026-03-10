@@ -4,6 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Integration.Test.Client;
+using RestSharp;
 using Sonarr.Api.V3.Episodes;
 
 namespace NzbDrone.Integration.Test.ApiTests
@@ -26,8 +27,8 @@ namespace NzbDrone.Integration.Test.ApiTests
             var series = EnsureSeries(266189, "The Blacklist", true);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddQueryParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
+            request.AddQueryParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
             items = items.Where(v => v.SeriesId == series.Id).ToList();
@@ -42,9 +43,9 @@ namespace NzbDrone.Integration.Test.ApiTests
             var series = EnsureSeries(266189, "The Blacklist", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
-            request.AddParameter("unmonitored", "false");
+            request.AddQueryParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
+            request.AddQueryParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddQueryParameter("unmonitored", "false");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
             items = items.Where(v => v.SeriesId == series.Id).ToList();
@@ -58,9 +59,9 @@ namespace NzbDrone.Integration.Test.ApiTests
             var series = EnsureSeries(266189, "The Blacklist", false);
 
             var request = Calendar.BuildRequest();
-            request.AddParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
-            request.AddParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
-            request.AddParameter("unmonitored", "true");
+            request.AddQueryParameter("start", new DateTime(2015, 10, 1).ToString("s") + "Z");
+            request.AddQueryParameter("end", new DateTime(2015, 10, 3).ToString("s") + "Z");
+            request.AddQueryParameter("unmonitored", "true");
             var items = Calendar.Get<List<EpisodeResource>>(request);
 
             items = items.Where(v => v.SeriesId == series.Id).ToList();

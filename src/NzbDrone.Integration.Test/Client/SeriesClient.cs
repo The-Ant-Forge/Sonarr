@@ -7,7 +7,7 @@ namespace NzbDrone.Integration.Test.Client
 {
     public class SeriesClient : ClientBase<SeriesResource>
     {
-        public SeriesClient(IRestClient restClient, string apiKey)
+        public SeriesClient(RestClient restClient, string apiKey)
             : base(restClient, apiKey)
         {
         }
@@ -35,7 +35,7 @@ namespace NzbDrone.Integration.Test.Client
 
     public class SystemInfoClient : ClientBase<SeriesResource>
     {
-        public SystemInfoClient(IRestClient restClient, string apiKey)
+        public SystemInfoClient(RestClient restClient, string apiKey)
             : base(restClient, apiKey)
         {
         }

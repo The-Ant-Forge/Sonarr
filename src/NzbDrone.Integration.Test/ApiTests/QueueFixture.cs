@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using NzbDrone.Core.Messaging.Commands;
 using NzbDrone.Integration.Test.Client;
+using RestSharp;
 using Sonarr.Api.V3.Queue;
 using Sonarr.Http;
 
@@ -16,7 +17,7 @@ namespace NzbDrone.Integration.Test.ApiTests
         private PagingResource<QueueResource> GetFirstPage()
         {
             var request = Queue.BuildRequest();
-            request.AddParameter("includeUnknownSeriesItems", true);
+            request.AddQueryParameter("includeUnknownSeriesItems", "true");
 
             return Queue.Get<PagingResource<QueueResource>>(request);
         }
