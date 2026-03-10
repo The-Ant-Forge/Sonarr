@@ -2,39 +2,27 @@
 
 ## Known Issues
 
-### ~~NLog 6.x / Moq Proxy Failure (154 Test Failures)~~ — RESOLVED
+_No known test failures. All 5,645 unit tests passing as of 2026-03-10._
 
-**Fix**: Changed `MigrationTest.SetupLogging()` to use `new NLogLoggerProvider()` instead of `Mocker.Resolve<NLogLoggerProvider>()`. The AutoMoqer was trying to auto-mock `ILoggingConfigurationLoader` (made internal in NLog 6), but `NLogLoggerProvider` has a public parameterless constructor that uses `LogManager.LogFactory` directly, bypassing the need to resolve internal interfaces.
+### Resolved Issues
 
----
+- ~~NLog 6.x / Moq Proxy (154 tests)~~ — Fixed in `1b7667316`: direct `new NLogLoggerProvider()` bypasses AutoMoqer
+- ~~Korean & Æ Diacritics (2 tests)~~ — Fixed in `1b7667316`: FormC recomposition + Æ/æ ligature mappings
+- ~~DryIoc Circular Dependency (8 tests)~~ — Fixed in `1b7667316`: `Lazy<ISeriesService>` in EpisodeService
 
-### ~~Korean & Æ Diacritics Test Failures (2 failures)~~ — RESOLVED
+## Deferred Major Upgrades
 
-**Fix**: Added `.Normalize(NormalizationForm.FormC)` recomposition at the end of `RemoveDiacritics()` to recompose Hangul jamos back into syllable characters. Added Æ/æ ligature mappings to the `AdditionalDiacritics` dictionary.
+These are the only remaining items from the dependency audit (`docs/Spec-Dependency-Update.md`).
+Each is a Very High effort project warranting its own spec document.
 
----
+| Item | Effort | Files | Blocker | Notes |
+|---|---|---|---|---|
+| **FluentValidation 9→12** | Very High | 253+ | None | Mechanical: `RuleFor` API changes, validator registration |
+| **react-router 5→7** | Very High | Many | Before React 19 | Paradigm shift to data routers; removes `connected-react-router`, `history` |
+| **React 18→19** | Very High | Many | After router | `react-window` v2 requires React 19 |
+| **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions` |
 
-### ~~DryIoc Recursive Dependency (8 Test Failures)~~ — RESOLVED
+## Other Planned Work
 
-**Fix**: Changed `ISeriesService` to `Lazy<ISeriesService>` in `EpisodeService` constructor. The circular dependency (`EpisodeService` ↔ `SeriesService`) was introduced by the Disable Monitoring feature. `Lazy<T>` defers resolution until runtime, breaking the DI cycle.
-
-## Planned Work
-
-### Dependency Updates (Step 6 — Moderate Effort)
-
-Per `docs/Spec-Dependency-Update.md`:
-
-- [ ] Remove `prop-types` package (4 shape files → TS interfaces) — **DONE** (shape files already deleted, babel plugin cleaned up)
-- [ ] Upgrade `Ical.Net` 4→5 — **DONE**
-- [ ] Upgrade `Selenium.Support` 3→4 — **DONE**
-- [ ] Upgrade `RestSharp` 106→114 — **DONE**
-- [ ] Upgrade `NUnit` 3→4 + `FluentAssertions` 6→8 — **DONE**
-
-### Deferred Major Upgrades
-
-These require significant effort and are tracked in `Spec-Dependency-Update.md` Step 7:
-
-- [ ] FluentValidation 9→11+ (268 files)
-- [ ] React 18→19, react-router 5→7, redux 4→5
-- [ ] `jquery` → `fetch` API (5 files)
-- [ ] `file-loader`/`url-loader` → webpack 5 asset modules
+- [ ] Code review (see `CLAUDE.md` — Code Review Phases)
+- [ ] Unmonitor feature refinements (if needed after testing)

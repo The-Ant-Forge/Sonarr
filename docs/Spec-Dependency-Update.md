@@ -379,7 +379,7 @@ When removing packages, also remove corresponding `@types/*`:
 | # | Action | Cluster | Status | Notes |
 |---|---|---|---|---|
 | 15 | FluentValidation 9→12 | — | 🔲 Deferred | 253+ files; mechanical but high volume |
-| 16 | NLog 5→6 + NLog.Extensions.Logging 5→6 | NLog | ✅ `f059c83a9` | Introduced NLog/Moq proxy test failure (154 tests) — see `docs/TODO.md` |
+| 16 | NLog 5→6 + NLog.Extensions.Logging 5→6 | NLog | ✅ `f059c83a9` | NLog/Moq proxy test failure resolved in `1b7667316` |
 | 17 | Sentry 5→6 (.NET) + @sentry/browser 7→10 | Sentry | ✅ `f059c83a9` | Done in lockstep with NLog |
 | 18 | NUnit 3→4 + FluentAssertions 6→8 | Test Infra | ✅ `7f9d78cc3` | NUnit 4.5.1, FA 8.8.0; coverlet 6→8 still deferred |
 | 19 | RestSharp 106→114 | — | ✅ `7f9d78cc3` | Complete API rewrite; test-only impact |
@@ -406,16 +406,16 @@ Phase 1 + Phase 2 are **fully complete**:
 - **Radarr parity:** Aligned with Radarr's successful inlining of Diacritical.Net,
   IPAddressRange, and filesize (we keep qs since it has 126+ imports vs Radarr's 1)
 
-Phase 3 completion: **15 of 16 items done** (NLog, Sentry, NUnit, FA, RestSharp, ESLint/Prettier/Stylelint, Selenium, Ical.Net, Test.Sdk, coverlet, css-loader, postcss-loader, postcss-mixins, postcss-nested, webpack-cli).
+Phase 3 completion: **15 of 16 items done** (NLog, Sentry, NUnit, FA, RestSharp, ESLint/Prettier/Stylelint, Selenium, Ical.Net, Test.Sdk, coverlet, css-loader, postcss-loader, postcss-mixins, postcss-nested, webpack-cli). All test failures from upgrades resolved in `1b7667316` (NLog/Moq proxy, diacritics FormC recomposition, EpisodeService circular dependency).
 
-**Remaining Phase 3 items (4) — all Very High effort frontend framework upgrades:**
+**Remaining Phase 3 items (4) — all Very High effort framework upgrades:**
 
-| Item | Effort | Blocker |
-|---|---|---|
-| FluentValidation 9→12 | Very High (253+ files) | None — can start anytime |
-| react-router 5→7 | Very High | Should be done before React 19 |
-| React 18→19 | Very High | After router migration |
-| redux 4→5 / react-redux 7→9 | Very High | State management overhaul |
+| Item | Effort | Blocker | Notes |
+|---|---|---|---|
+| FluentValidation 9→12 | Very High (253+ files) | None — can start anytime | Mechanical: `RuleFor` API changes, validator registration |
+| react-router 5→7 | Very High | Should be done before React 19 | Paradigm shift: route config → data routers; also removes `connected-react-router`, `history` |
+| React 18→19 | Very High | After router migration | `react-window` v2 requires React 19; `@types/react` needs update |
+| redux 4→5 / react-redux 7→9 | Very High | State management overhaul | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions` |
 
 ---
 
@@ -428,11 +428,12 @@ Phase 1c (Items 9-10)   →  ✅ DONE — 71071377b
 Phase 1d (Item 11)      →  ✅ DONE — 71071377b
 Phase 1e (Item 12)      →  ✅ DONE — 71071377b
 Phase 2  (Items 13-14)  →  ✅ DONE — 9ddc08ce7, 1e3e4f2e6
-Phase 3  (Items 15-26)  →  15/16 DONE — 4 remaining (all Very High effort frontend framework upgrades)
+Phase 3  (Items 15-26)  →  15/16 DONE — 4 remaining (all Very High effort framework upgrades)
+Test fixes (Item 16+)   →  ✅ DONE — 1b7667316 (NLog/Moq proxy, diacritics, circular dep — 164 tests restored)
 ```
 
 Each sub-phase was committed separately so regressions are attributable.
-The remaining Phase 3 items each warrant their own specification document in `docs/`.
+All test suites green (5,645 passed, 0 failed). The remaining Phase 3 items each warrant their own specification document in `docs/`.
 
 ---
 
