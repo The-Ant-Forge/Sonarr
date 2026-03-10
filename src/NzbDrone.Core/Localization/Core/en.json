@@ -2166,6 +2166,8 @@
   "UnmappedFolders": "Unmapped Folders",
   "UnmonitorDeletedEpisodes": "Unmonitor Deleted Episodes",
   "UnmonitorDeletedEpisodesHelpText": "Episodes deleted from disk are automatically unmonitored in {appName}",
+  "UnmonitorOnCutoffMet": "Disable Monitoring",
+  "UnmonitorOnCutoffMetHelpText": "Turn off monitoring of downloaded media once the quality cutoff is met",
   "UnmonitorSelected": "Unmonitor Selected",
   "UnmonitorSpecialEpisodes": "Unmonitor Specials",
   "UnmonitorSpecialsEpisodesDescription": "Unmonitor all special episodes without changing the monitored status of other episodes",

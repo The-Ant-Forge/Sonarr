@@ -5,6 +5,7 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
+using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -49,13 +50,22 @@ namespace NzbDrone.Core.Tv
     {
         private readonly IEpisodeRepository _episodeRepository;
         private readonly IConfigService _configService;
+        private readonly IUpgradableSpecification _upgradableSpecification;
+        private readonly ISeriesService _seriesService;
         private readonly ICached<HashSet<int>> _cache;
         private readonly Logger _logger;
 
-        public EpisodeService(IEpisodeRepository episodeRepository, IConfigService configService, ICacheManager cacheManager, Logger logger)
+        public EpisodeService(IEpisodeRepository episodeRepository,
+                              IConfigService configService,
+                              IUpgradableSpecification upgradableSpecification,
+                              ISeriesService seriesService,
+                              ICacheManager cacheManager,
+                              Logger logger)
         {
             _episodeRepository = episodeRepository;
             _configService = configService;
+            _upgradableSpecification = upgradableSpecification;
+            _seriesService = seriesService;
             _cache = cacheManager.GetCache<HashSet<int>>(GetType());
             _logger = logger;
         }
@@ -289,9 +299,27 @@ namespace NzbDrone.Core.Tv
 
         public void Handle(EpisodeFileAddedEvent message)
         {
-            foreach (var episode in message.EpisodeFile.Episodes.Value)
+            var episodeFile = message.EpisodeFile;
+            var unmonitorOnCutoffMet = _configService.UnmonitorOnCutoffMet;
+            var cutoffMet = false;
+
+            if (unmonitorOnCutoffMet)
             {
-                _episodeRepository.SetFileId(episode, message.EpisodeFile.Id);
+                var series = _seriesService.GetSeries(episodeFile.SeriesId);
+                var qualityProfile = series.QualityProfile.Value;
+                cutoffMet = !_upgradableSpecification.QualityCutoffNotMet(qualityProfile, episodeFile.Quality);
+            }
+
+            foreach (var episode in episodeFile.Episodes.Value)
+            {
+                _episodeRepository.SetFileId(episode, episodeFile.Id);
+
+                if (cutoffMet)
+                {
+                    _logger.Debug("Quality cutoff met for [{0}], unmonitoring episode [{1}]", episodeFile.RelativePath, episode);
+                    episode.Monitored = false;
+                    _episodeRepository.Update(episode);
+                }
 
                 lock (_cache)
                 {
@@ -303,7 +331,7 @@ namespace NzbDrone.Core.Tv
                     }
                 }
 
-                _logger.Debug("Linking [{0}] > [{1}]", message.EpisodeFile.RelativePath, episode);
+                _logger.Debug("Linking [{0}] > [{1}]", episodeFile.RelativePath, episode);
             }
         }
 

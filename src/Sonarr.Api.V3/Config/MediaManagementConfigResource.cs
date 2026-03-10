@@ -9,6 +9,7 @@ namespace Sonarr.Api.V3.Config
     public class MediaManagementConfigResource : RestResource
     {
         public bool AutoUnmonitorPreviouslyDownloadedEpisodes { get; set; }
+        public bool UnmonitorOnCutoffMet { get; set; }
         public string RecycleBin { get; set; }
         public int RecycleBinCleanupDays { get; set; }
         public ProperDownloadTypes DownloadPropersAndRepacks { get; set; }
@@ -42,6 +43,7 @@ namespace Sonarr.Api.V3.Config
             return new MediaManagementConfigResource
             {
                 AutoUnmonitorPreviouslyDownloadedEpisodes = model.AutoUnmonitorPreviouslyDownloadedEpisodes,
+                UnmonitorOnCutoffMet = model.UnmonitorOnCutoffMet,
                 RecycleBin = model.RecycleBin,
                 RecycleBinCleanupDays = model.RecycleBinCleanupDays,
                 DownloadPropersAndRepacks = model.DownloadPropersAndRepacks,

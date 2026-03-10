@@ -18,6 +18,7 @@ export interface MediaManagementSettingsModel {
   extraFileExtensions: string;
   userRejectedExtensions: string;
   autoUnmonitorPreviouslyDownloadedEpisodes: boolean;
+  unmonitorOnCutoffMet: boolean;
   downloadPropersAndRepacks: string;
   enableMediaInfo: boolean;
   rescanAfterRefresh: string;
