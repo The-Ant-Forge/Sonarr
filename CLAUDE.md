@@ -43,34 +43,36 @@ yarn install
 yarn start        # dev server with hot reload
 yarn build        # production build → _output/UI/
 
-# Backend
+# Backend (console + libraries)
 dotnet build src/Sonarr.sln -c Release
 
-# Backend — win-x64 self-contained (for deployment)
-dotnet publish src/NzbDrone.Console/Sonarr.Console.csproj -c Release -r win-x64 --self-contained
+# Windows tray app (separate — targets net10.0-windows)
+dotnet build src/NzbDrone/Sonarr.csproj -c Release -p:EnableAnalyzers=false
 
-# Quick dev run
+# Quick dev run (console mode, uses C:\ProgramData\Sonarr by default)
 dotnet run --project src/NzbDrone.Console/Sonarr.Console.csproj
 ```
-App runs at http://localhost:8989
 
 ## Local Testing Deployment
 
-**Installation directory:** `D:\Apps\Sonarr` — a configured Sonarr instance with database, config, and indexers already set up. Deploy build output here for smoke testing.
+**Installation directory:** `D:\Apps\Sonarr` — a configured Sonarr instance with database, config, and indexers already set up.
 
 | Path | Description |
 |---|---|
 | `D:\Apps\Sonarr/` | Live installation (preserve `config.xml`, `sonarr.db`, `logs.db`, `Backups/`, `logs/`) |
-| `_output/net10.0/` | Backend DLLs (copy to install dir root) |
+| `_output/net10.0-windows/` | Backend DLLs + tray app (use this for Windows deploy, not `net10.0/`) |
 | `_output/UI/` | Frontend assets (copy to install dir as `UI/`) |
 | `_tests/net10.0/` | Test assemblies |
 
 **Deploy & run:**
 ```bash
-bash deploy.sh --clean                                           # deploy build output
-"D:\Apps\Sonarr\Sonarr.Console.exe" -data="D:\Apps\Sonarr"      # start (port 9103)
+bash deploy.sh --clean                                     # deploy build output
+"D:\Apps\Sonarr\Sonarr.exe" -data="D:\Apps\Sonarr"        # tray mode (port 9103)
+"D:\Apps\Sonarr\Sonarr.Console.exe" -data="D:\Apps\Sonarr" # console mode (port 9103)
 ```
 Web UI: http://localhost:9103 | API key: see `D:\Apps\Sonarr\config.xml`
+
+**Important:** The `-data` flag MUST use Windows backslash paths (`D:\Apps\Sonarr`), not forward slashes. Without `-data`, Sonarr defaults to `C:\ProgramData\Sonarr`.
 
 ## Linting (required before committing frontend changes)
 ```bash
