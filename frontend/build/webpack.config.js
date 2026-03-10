@@ -190,6 +190,7 @@ module.exports = (env) => {
                   localIdentName: isProduction
                     ? '[name]/[local]/[hash:base64:5]'
                     : '[name]/[local]',
+                  namedExport: false,
                 },
               },
             },
