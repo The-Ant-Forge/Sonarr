@@ -1,6 +1,6 @@
-import $ from 'jquery';
 import { batchActions } from 'redux-batched-actions';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
+import serializeQueryParams from 'Utilities/serializeQueryParams';
 import { removeItem, set } from '../baseActions';
 
 function createRemoveItemHandler(section, url) {
@@ -13,7 +13,7 @@ function createRemoveItemHandler(section, url) {
     dispatch(set({ section, isDeleting: true }));
 
     const ajaxOptions = {
-      url: `${url}/${id}?${$.param(queryParams, true)}`,
+      url: `${url}/${id}?${serializeQueryParams(queryParams)}`,
       method: 'DELETE'
     };
 

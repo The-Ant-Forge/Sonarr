@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { type Error } from 'App/State/AppSectionState';
-import createAjaxRequest from 'Utilities/createAjaxRequest';
+import createAjaxRequest, { type AjaxOptions } from 'Utilities/createAjaxRequest';
 import requestAction from 'Utilities/requestAction';
 
 const callbackUrl = `${window.location.origin}${window.Sonarr.urlBase}/oauth.html`;
@@ -115,7 +115,7 @@ function showOAuthWindow(
 
 function executeIntermediateRequest(
   payload: Record<string, unknown>,
-  ajaxOptions: Record<string, unknown>
+  ajaxOptions: AjaxOptions
 ): Promise<OAuthResponse> {
   return createAjaxRequest(ajaxOptions).request.then(
     (data: Record<string, unknown>) => {
@@ -175,7 +175,7 @@ const useOAuth = () => {
         } else {
           const intermediateResponse = await executeIntermediateRequest(
             otherPayload,
-            response // Pass the entire response as ajaxOptions
+            response as unknown as AjaxOptions
           );
           startResponse = intermediateResponse;
 

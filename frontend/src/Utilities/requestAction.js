@@ -1,5 +1,5 @@
-import $ from 'jquery';
 import createAjaxRequest from './createAjaxRequest';
+import serializeQueryParams from './serializeQueryParams';
 
 function flattenProviderData(providerData) {
   return Object.keys(providerData).reduce((acc, key) => {
@@ -31,7 +31,7 @@ function requestAction(payload) {
   };
 
   if (queryParams) {
-    ajaxOptions.url += `?${$.param(queryParams, true)}`;
+    ajaxOptions.url += `?${serializeQueryParams(queryParams)}`;
   }
 
   return createAjaxRequest(ajaxOptions).request;
