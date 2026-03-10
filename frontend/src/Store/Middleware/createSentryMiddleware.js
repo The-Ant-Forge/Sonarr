@@ -82,10 +82,9 @@ export default function createSentryMiddleware() {
     beforeSend: cleanseData
   });
 
-  sentry.configureScope((scope) => {
-    scope.setTag('branch', branch);
-    scope.setTag('version', version);
-  });
+  const scope = sentry.getCurrentScope();
+  scope.setTag('branch', branch);
+  scope.setTag('version', version);
 
   return createMiddleware();
 }
