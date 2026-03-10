@@ -87,8 +87,8 @@ These require code changes and carry risk. Each is its own work item.
 | RestSharp | 106.15.0 → 114.0.0 | Medium | Low | ✅ Done `7f9d78cc3` |
 | Selenium.Support | 3.141.0 → 4.41.0 | Medium | Low | ✅ Done `7f9d78cc3` |
 | Ical.Net | 4.3.1 → 5.2.1 | Low | Low | ✅ Done `7f9d78cc3` |
-| Microsoft.NET.Test.Sdk | 17.14.0 → 18.3.0 | Low | Low | 🔲 Deferred |
-| coverlet.collector | 6.0.4 → 8.0.0 | Low | Medium | 🔲 Deferred |
+| Microsoft.NET.Test.Sdk | 17.14.0 → 18.3.0 | Low | Low | ✅ Done `a341abbd3` |
+| coverlet.collector | 6.0.4 → 8.0.0 | Low | Medium | ✅ Done `a341abbd3` |
 
 ### Yarn
 
@@ -102,11 +102,11 @@ These require code changes and carry risk. Each is its own work item.
 | prettier | 2.8.8 → 3.8.1 | Low | Low | ✅ Done `7251abb36` |
 | stylelint / stylelint-order | 15.6.1 / 6.0.4 → 17.4.0 / 8.0.0 | Low | Low | ✅ Done `7251abb36` |
 | jquery | 3.7.1 → removed | Medium | Medium | ✅ Done `9ddc08ce7` |
-| css-loader | 6.7.3 → 7.1.4 | Medium | Medium | 🔲 Deferred — build config changes |
-| postcss-mixins | 9.0.4 → 12.1.2 | Medium | Medium | 🔲 Deferred — major version jump |
-| postcss-nested | 6.2.0 → 7.0.2 | Low | Low | 🔲 Deferred |
-| webpack-cli | 5.1.4 → 6.0.1 | Medium | Medium | 🔲 Deferred |
-| postcss-loader | 7.3.0 → 8.2.1 | Low | Low | 🔲 Deferred |
+| css-loader | 6.7.3 → 7.1.4 | Medium | Medium | ✅ Done `a341abbd3` (added `namedExport: false`) |
+| postcss-mixins | 9.0.4 → 12.1.2 | Medium | Medium | ✅ Done `a341abbd3` |
+| postcss-nested | 6.2.0 → 7.0.2 | Low | Low | ✅ Done `a341abbd3` |
+| webpack-cli | 5.1.4 → 6.0.1 | Medium | Medium | ✅ Done `a341abbd3` |
+| postcss-loader | 7.3.0 → 8.2.1 | Low | Low | ✅ Done `a341abbd3` |
 
 ---
 
@@ -406,9 +406,9 @@ Phase 1 + Phase 2 are **fully complete**:
 - **Radarr parity:** Aligned with Radarr's successful inlining of Diacritical.Net,
   IPAddressRange, and filesize (we keep qs since it has 126+ imports vs Radarr's 1)
 
-Phase 3 completion: **8 of 12 items done** (NLog, Sentry, NUnit, FA, RestSharp, ESLint/Prettier/Stylelint, Selenium, Ical.Net).
+Phase 3 completion: **15 of 16 items done** (NLog, Sentry, NUnit, FA, RestSharp, ESLint/Prettier/Stylelint, Selenium, Ical.Net, Test.Sdk, coverlet, css-loader, postcss-loader, postcss-mixins, postcss-nested, webpack-cli).
 
-**Remaining Phase 3 items (4):**
+**Remaining Phase 3 items (4) — all Very High effort frontend framework upgrades:**
 
 | Item | Effort | Blocker |
 |---|---|---|
@@ -416,11 +416,6 @@ Phase 3 completion: **8 of 12 items done** (NLog, Sentry, NUnit, FA, RestSharp, 
 | react-router 5→7 | Very High | Should be done before React 19 |
 | React 18→19 | Very High | After router migration |
 | redux 4→5 / react-redux 7→9 | Very High | State management overhaul |
-
-**Minor deferred items:**
-- coverlet.collector 6→8 (low effort, update with next test infra change)
-- Microsoft.NET.Test.Sdk 17→18 (low effort)
-- css-loader 6→7, postcss-mixins 9→12, postcss-nested 6→7, webpack-cli 5→6, postcss-loader 7→8 (build tooling)
 
 ---
 
@@ -433,7 +428,7 @@ Phase 1c (Items 9-10)   →  ✅ DONE — 71071377b
 Phase 1d (Item 11)      →  ✅ DONE — 71071377b
 Phase 1e (Item 12)      →  ✅ DONE — 71071377b
 Phase 2  (Items 13-14)  →  ✅ DONE — 9ddc08ce7, 1e3e4f2e6
-Phase 3  (Items 15-26)  →  8/12 DONE — 4 remaining (all Very High effort frontend framework upgrades)
+Phase 3  (Items 15-26)  →  15/16 DONE — 4 remaining (all Very High effort frontend framework upgrades)
 ```
 
 Each sub-phase was committed separately so regressions are attributable.
