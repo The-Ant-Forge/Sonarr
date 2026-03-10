@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Net;
-using NetTools;
 using NzbDrone.Common.Http;
 using NzbDrone.Common.Http.Proxy;
 using NzbDrone.Core.Configuration;
@@ -59,10 +58,63 @@ namespace NzbDrone.Core.Http
 
         private static bool IsBypassedByIpAddressRange(string[] bypassList, string host)
         {
-            return bypassList.Any(bypass =>
-                IPAddressRange.TryParse(bypass, out var ipAddressRange) &&
-                IPAddress.TryParse(host, out var ipAddress) &&
-                ipAddressRange.Contains(ipAddress));
+            if (!IPAddress.TryParse(host, out var ipAddress))
+            {
+                return false;
+            }
+
+            return bypassList.Any(bypass => IsIpInCidrRange(bypass, ipAddress));
+        }
+
+        private static bool IsIpInCidrRange(string cidr, IPAddress address)
+        {
+            var parts = cidr.Split('/');
+
+            if (!IPAddress.TryParse(parts[0], out var networkAddress))
+            {
+                return false;
+            }
+
+            if (networkAddress.AddressFamily != address.AddressFamily)
+            {
+                return false;
+            }
+
+            if (parts.Length == 1)
+            {
+                return networkAddress.Equals(address);
+            }
+
+            if (!int.TryParse(parts[1], out var prefixLength))
+            {
+                return false;
+            }
+
+            var networkBytes = networkAddress.GetAddressBytes();
+            var addressBytes = address.GetAddressBytes();
+
+            var fullBytes = prefixLength / 8;
+            var remainingBits = prefixLength % 8;
+
+            for (var i = 0; i < fullBytes; i++)
+            {
+                if (networkBytes[i] != addressBytes[i])
+                {
+                    return false;
+                }
+            }
+
+            if (remainingBits > 0 && fullBytes < networkBytes.Length)
+            {
+                var mask = (byte)(0xFF << (8 - remainingBits));
+
+                if ((networkBytes[fullBytes] & mask) != (addressBytes[fullBytes] & mask))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using Diacritical;
-using NzbDrone.Common.Globalization;
 
 namespace NzbDrone.Common.Extensions
 {
@@ -14,10 +13,12 @@ namespace NzbDrone.Common.Extensions
     {
         private static readonly Regex CamelCaseRegex = new Regex("(?<!^)[A-Z]", RegexOptions.Compiled);
 
-        static StringExtensions()
+        private static readonly Dictionary<char, string> AdditionalDiacritics = new Dictionary<char, string>
         {
-            DiacriticMap.AddProviders(new AdditionalDiacriticsProvider());
-        }
+            { '\u00f0', "d" },  // ð
+            { '\u00d0', "D" },  // Ð
+            { '\u00fe', "th" }, // þ
+        };
 
         public static string NullSafe(this string target)
         {
@@ -70,7 +71,33 @@ namespace NzbDrone.Common.Extensions
 
         public static string RemoveDiacritics(this string text)
         {
-            return Diacritical.StringExtensions.RemoveDiacritics(text);
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            var sb = new StringBuilder(text.Length);
+
+            foreach (var c in text)
+            {
+                if (AdditionalDiacritics.TryGetValue(c, out var replacement))
+                {
+                    sb.Append(replacement);
+                    continue;
+                }
+
+                var normalized = c.ToString().Normalize(NormalizationForm.FormD);
+
+                foreach (var nc in normalized)
+                {
+                    if (CharUnicodeInfo.GetUnicodeCategory(nc) != UnicodeCategory.NonSpacingMark)
+                    {
+                        sb.Append(nc);
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         public static string TrimEnd(this string text, string postfix)
