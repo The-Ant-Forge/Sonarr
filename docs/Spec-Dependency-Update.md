@@ -75,37 +75,38 @@ These require code changes and carry risk. Each is its own work item.
 
 ### NuGet
 
-| Package | Current | Latest | Effort | Risk | Notes |
-|---|---|---|---|---|---|
-| FluentValidation | 9.5.4 | 12.1.1 | Very High | Medium | 253+ files; API changes but mechanical; prioritise before NLog |
-| NLog | 5.5.1 | 6.1.1 | Very High | High | 435+ files; pervasive and operationally sensitive |
-| NLog.Extensions.Logging | 5.5.0 | 6.1.2 | Very High | High | Must upgrade in lockstep with NLog |
-| Sentry | 5.16.3 | 6.1.0 | Medium | Medium | 16 files; integrated with NLog — do after NLog |
-| NUnit | 3.14.0 | 4.5.1 | High | Medium | All test projects; broader than classic→constraint — uses `CollectionAssert`, `Assert.IsFalse`, `Assert.DoesNotThrowAsync` |
-| NUnit3TestAdapter | 5.2.0 | 6.1.0 | Low | Low | Update alongside NUnit |
-| FluentAssertions | 6.12.0 | 8.8.0 | High | Medium | All tests; API breaking changes |
-| RestSharp | 106.15.0 | 114.0.0 | Medium | Low | 15 files; test-only |
-| Selenium.Support | 3.141.0 | 4.41.0 | Medium | Low | Automation tests only |
-| Microsoft.NET.Test.Sdk | 17.10.0 | 18.3.0 | Low | Low | Test infrastructure (in Directory.Build.props) |
-| coverlet.collector | 6.0.4 | 8.0.0 | Low | Medium | Central props + hardcoded identity in coverlet.runsettings |
+| Package | From → To | Effort | Risk | Status |
+|---|---|---|---|---|
+| FluentValidation | 9.5.4 → 12.1.1 | Very High | Medium | 🔲 Deferred — 253+ files; mechanical |
+| NLog | 5.5.1 → 6.1.1 | Very High | High | ✅ Done `f059c83a9` |
+| NLog.Extensions.Logging | 5.5.0 → 6.1.2 | Very High | High | ✅ Done `f059c83a9` |
+| Sentry | 5.16.3 → 6.1.0 | Medium | Medium | ✅ Done `f059c83a9` |
+| NUnit | 3.14.0 → 4.5.1 | High | Medium | ✅ Done `7f9d78cc3` |
+| NUnit3TestAdapter | 5.2.0 → 6.1.0 | Low | Low | ✅ Done `7f9d78cc3` |
+| FluentAssertions | 6.12.0 → 8.8.0 | High | Medium | ✅ Done `7f9d78cc3` |
+| RestSharp | 106.15.0 → 114.0.0 | Medium | Low | ✅ Done `7f9d78cc3` |
+| Selenium.Support | 3.141.0 → 4.41.0 | Medium | Low | ✅ Done `7f9d78cc3` |
+| Ical.Net | 4.3.1 → 5.2.1 | Low | Low | ✅ Done `7f9d78cc3` |
+| Microsoft.NET.Test.Sdk | 17.14.0 → 18.3.0 | Low | Low | 🔲 Deferred |
+| coverlet.collector | 6.0.4 → 8.0.0 | Low | Medium | 🔲 Deferred |
 
 ### Yarn
 
-| Package | Current | Latest | Effort | Risk | Notes |
-|---|---|---|---|---|---|
-| react-router / react-router-dom | 5.2.0 | 7.13.1 | Very High | High | Do on React 18 first, before React 19 |
-| React / react-dom | 18.3.1 | 19.2.4 | Very High | High | After router migration |
-| redux / react-redux | 4.2.1 / 7.2.4 | 5.0.1 / 9.2.0 | Very High | High | State management layer |
-| @sentry/browser | 7.119.1 | 10.43.0 | Medium | Medium | API changes but migration guide exists |
-| eslint | 8.57.1 | 10.0.3 | Medium | Medium | Flat config migration |
-| prettier | 2.8.8 | 3.8.1 | Low | Low | Formatting only; may change style |
-| stylelint / stylelint-order | 15.6.1 / 6.0.4 | 17.4.0 / 8.0.0 | Low | Low | CSS linting config changes |
-| jquery | 3.7.1 | N/A | Medium | Medium | Remove entirely (see §4.4) — data-layer refactor |
-| css-loader | 6.7.3 | 7.1.4 | Medium | Medium | Build config changes |
-| postcss-mixins | 9.0.4 | 12.1.2 | Medium | Medium | Major version jump |
-| postcss-nested | 6.2.0 | 7.0.2 | Low | Low | Minor API changes |
-| webpack-cli | 5.1.4 | 6.0.1 | Medium | Medium | CLI changes |
-| postcss-loader | 7.3.0 | 8.2.1 | Low | Low | Loader config changes |
+| Package | From → To | Effort | Risk | Status |
+|---|---|---|---|---|
+| react-router / react-router-dom | 5.2.0 → 7.x | Very High | High | 🔲 Deferred — do before React 19 |
+| React / react-dom | 18.3.1 → 19.x | Very High | High | 🔲 Deferred — after router migration |
+| redux / react-redux | 4.2.1 / 7.2.4 → 5.x / 9.x | Very High | High | 🔲 Deferred — state management overhaul |
+| @sentry/browser | 7.119.1 → 10.43.0 | Medium | Medium | ✅ Done `f059c83a9` |
+| eslint | 8.57.1 → 9.x | Medium | Medium | ✅ Done `7251abb36` (flat config) |
+| prettier | 2.8.8 → 3.8.1 | Low | Low | ✅ Done `7251abb36` |
+| stylelint / stylelint-order | 15.6.1 / 6.0.4 → 17.4.0 / 8.0.0 | Low | Low | ✅ Done `7251abb36` |
+| jquery | 3.7.1 → removed | Medium | Medium | ✅ Done `9ddc08ce7` |
+| css-loader | 6.7.3 → 7.1.4 | Medium | Medium | 🔲 Deferred — build config changes |
+| postcss-mixins | 9.0.4 → 12.1.2 | Medium | Medium | 🔲 Deferred — major version jump |
+| postcss-nested | 6.2.0 → 7.0.2 | Low | Low | 🔲 Deferred |
+| webpack-cli | 5.1.4 → 6.0.1 | Medium | Medium | 🔲 Deferred |
+| postcss-loader | 7.3.0 → 8.2.1 | Low | Low | 🔲 Deferred |
 
 ---
 
@@ -135,7 +136,7 @@ These require code changes and carry risk. Each is its own work item.
 | Lib.Harmony | 2.4.2 | Latest stable |
 | Equ | 2.3.0 | Latest stable |
 | ImpromptuInterface | 8.0.6 | Latest stable |
-| Ical.Net | 4.3.1 | Latest stable |
+| Ical.Net | 5.2.1 | Latest stable (upgraded from 4.3.1 in `7f9d78cc3`) |
 | NBuilder | 6.1.0 | Latest stable (test-only) |
 | Openur.FFMpegCore | 5.4.0.31 | Custom Servarr build |
 | Openur.FFprobeStatic | 8.0.1.302 | Custom Servarr build |
@@ -221,73 +222,54 @@ These are load-bearing. Replacing them would be a rewrite, not a refactor.
 
 ### 4.4 Light Usage — Candidates for Inlining
 
-#### Diacritical.Net → inline (~15 lines)
+#### ✅ Diacritical.Net → inline (~15 lines) — Done `c02cb2000`
 
 - **Used in:** 3 files (primarily `FileNameBuilder.cs`)
 - **Purpose:** Strip diacritical marks (accents) from strings
 - **Replacement:** `System.Globalization` — `Normalize(FormD)` + filter `NonSpacingMark`
-- **Risk:** Low — proven in Radarr
-- **Recommendation:** **REMOVE**
 
-#### IPAddressRange → inline (~25 lines)
+#### ✅ IPAddressRange → inline (~25 lines) — Done `c02cb2000`
 
 - **Used in:** 2 files (`HttpProxySettingsProvider.cs`)
 - **Purpose:** Parse CIDR notation and check if IP is in range
 - **Replacement:** `System.Net.IPAddress` + manual CIDR mask comparison
-- **Risk:** Low — proven in Radarr
-- **Recommendation:** **REMOVE**
 
-#### filesize → inline (~15 lines)
+#### ✅ filesize → inline (~15 lines) — Done `c02cb2000`
 
 - **Used in:** 2 files (`formatBytes.ts`, `formatBitrate.ts`)
 - **Purpose:** Format byte counts for display (e.g., "1.5 GB")
 - **Replacement:** Simple `const units = ['B','KB','MB','GB','TB']` formatter
-- **Risk:** Low — proven in Radarr
-- **Recommendation:** **REMOVE**
 
-#### element-class → inline (~3 lines)
+#### ✅ element-class → inline (~3 lines) — Done `c02cb2000`
 
 - **Used in:** 1 file (`Modal.tsx`)
 - **Purpose:** Add/remove CSS classes on DOM elements
 - **Replacement:** `document.body.classList.add/remove()`
-- **Risk:** Very low
-- **Recommendation:** **REMOVE**
 
-#### react-document-title → inline (~10 lines)
+#### ✅ react-document-title → inline (~10 lines) — Done `c02cb2000`
 
 - **Used in:** 2 files (`App.tsx`, `PageContent.tsx`)
 - **Purpose:** Set `document.title`
 - **Replacement:** `useEffect(() => { document.title = title; }, [title])` hook
-- **Risk:** Very low
-- **Recommendation:** **REMOVE**
 
-#### prop-types → gradual removal
+#### ✅ prop-types → removed — Done `c02cb2000`
 
-- **Used in:** 4 files (legacy code)
+- **Used in:** 4 files (legacy shape definitions)
 - **Purpose:** Runtime type checking (replaced by TypeScript)
 - **Replacement:** TypeScript interfaces (already in use everywhere else)
-- **Risk:** Very low
-- **Recommendation:** **REMOVE** as files are touched
 
-#### jquery → replace with fetch (data-layer refactor)
+#### ✅ jquery → replaced with fetch — Done `9ddc08ce7`
 
 - **Used in:** 5-7 files (`createAjaxRequest.js`, `requestAction.js`, action creators)
 - **Purpose:** AJAX calls (`$.ajax`, `$.param`, `$.Deferred`)
 - **Replacement:** Native `fetch` + `URLSearchParams` + `Promise`
-- **Complexity:** Medium — callers depend on jqXHR/Deferred-style `.done/.fail/.always`
-  contract plus abort behaviour. Webpack aliasing in `webpack.config.js:54`. This is a
-  small frontend data-layer refactor, not just a dependency cleanup.
-- **Risk:** Medium — 28KB bundle savings
-- **Recommendation:** **REMOVE** — proven in Radarr
+- **Result:** 28KB bundle savings
 
-#### redux-localstorage → replace (medium complexity)
+#### ✅ redux-localstorage → replaced with inline enhancer — Done `1e3e4f2e6`
 
 - **Used in:** `createPersistState.js` (store enhancer)
 - **Purpose:** Persist Redux state to localStorage with custom slicing and migration
-- **Complexity:** Medium — current implementation includes custom path slicing, merge
-  semantics, and column migration logic in `createPersistState.js`. Not a trivial swap.
-- **Risk:** Medium — unmaintained since 2016
-- **Recommendation:** **REMOVE** — but budget for proper replacement, not a quick inline
+- **Replacement:** Custom persistence middleware preserving slicing + migration logic
 
 #### connected-react-router → defer
 
@@ -344,97 +326,118 @@ When removing packages, also remove corresponding `@types/*`:
 
 ## 7. Recommendations Summary
 
-### Phase 1a: Dead Package Removal (manifest-only, no code changes)
+> **Last updated:** 2026-03-10
+>
+> Legend: ✅ = Done, 🔲 = Remaining
 
-| # | Action | Effort |
-|---|---|---|
-| 1 | Remove `react-addons-shallow-compare` from package.json | Trivial |
-| 2 | Remove `react-async-script` from package.json | Trivial |
+### Phase 1a: Dead Package Removal (manifest-only, no code changes) — ✅ COMPLETE
 
-### Phase 1b: Inline Replacements (code changes, one file each)
-
-| # | Action | Effort |
-|---|---|---|
-| 3 | Inline `element-class` → classList API in `Modal.tsx` | Trivial |
-| 4 | Inline `react-document-title` → useEffect hook in `App.tsx` + `PageContent.tsx` | Trivial |
-| 5 | Inline `Diacritical.Net` → `StringExtensions.RemoveAccent()` (3 files) | Low |
-| 6 | Inline `IPAddressRange` → manual CIDR check (2 files) | Low |
-| 7 | Inline `filesize` → custom formatter (2 files) | Low |
-| 8 | Remove `prop-types` from 4 legacy files | Low |
-
-### Phase 1c: Safe Version Bumps — NuGet
-
-| # | Action | Effort |
-|---|---|---|
-| 9 | Apply all NuGet patch updates from §1a | Low |
-| 10 | Update Moq 4.18 → 4.20 | Low |
-
-### Phase 1d: Safe Version Bumps — Yarn Runtime
-
-| # | Action | Effort |
-|---|---|---|
-| 11 | Apply all Yarn runtime updates from §1b | Low |
-
-### Phase 1e: Safe Version Bumps — Yarn Tooling
-
-| # | Action | Effort |
-|---|---|---|
-| 12 | Apply all Yarn tooling updates from §1c | Low |
-
-### Phase 2: Medium Effort (one session each)
-
-| # | Action | Effort | Notes |
+| # | Action | Effort | Status |
 |---|---|---|---|
-| 13 | Replace `jquery` → `fetch` API (data-layer refactor, 7 files) | Medium | Includes jqXHR contract + webpack alias |
-| 14 | Replace `redux-localstorage` → custom persistence middleware | Medium | Custom slicing + migration logic |
+| 1 | Remove `react-addons-shallow-compare` from package.json | Trivial | ✅ `c02cb2000` |
+| 2 | Remove `react-async-script` from package.json | Trivial | ✅ `c02cb2000` |
 
-### Phase 3: Deferred Major Upgrades
+### Phase 1b: Inline Replacements (code changes, one file each) — ✅ COMPLETE
 
-These require dedicated migration sprints. Each should have its own spec in `docs/`.
-
-| # | Action | Trigger / Timing | Cluster |
+| # | Action | Effort | Status |
 |---|---|---|---|
-| 15 | FluentValidation 9→12 | Dedicated sprint; 253+ files; mechanical | — |
-| 16 | NLog 5→6 + NLog.Extensions.Logging 5→6 | Dedicated sprint; 435+ files | NLog |
-| 17 | Sentry 5→6 (.NET) + @sentry/browser 7→10 | After NLog upgrade | Sentry |
-| 18 | NUnit 3→4 + FluentAssertions 6→8 + coverlet 6→8 | Test modernization sprint | Test Infra |
-| 19 | RestSharp 106→114 | When overhauling integration tests | — |
-| 20 | react-router 5→7 + remove connected-react-router, history | On React 18 first | Router |
-| 21 | React 18→19 + react-dom | After router migration | React |
-| 22 | redux 4→5 / react-redux 7→9 + redux-batched-actions + redux-actions | State management overhaul | Redux |
-| 23 | eslint 8→10 + prettier 2→3 + stylelint 15→17 | Tooling modernization sprint | Linting |
-| 24 | Selenium 3→4 | Automation test refresh | — |
+| 3 | Inline `element-class` → classList API in `Modal.tsx` | Trivial | ✅ `c02cb2000` |
+| 4 | Inline `react-document-title` → useEffect hook in `App.tsx` + `PageContent.tsx` | Trivial | ✅ `c02cb2000` |
+| 5 | Inline `Diacritical.Net` → `StringExtensions.RemoveAccent()` (3 files) | Low | ✅ `c02cb2000` |
+| 6 | Inline `IPAddressRange` → manual CIDR check (2 files) | Low | ✅ `c02cb2000` |
+| 7 | Inline `filesize` → custom formatter (2 files) | Low | ✅ `c02cb2000` |
+| 8 | Remove `prop-types` from 4 legacy files | Low | ✅ `c02cb2000` |
+
+### Phase 1c: Safe Version Bumps — NuGet — ✅ COMPLETE
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 9 | Apply all NuGet patch updates from §1a | Low | ✅ `71071377b` |
+| 10 | Update Moq 4.18 → 4.20 | Low | ✅ `71071377b` |
+
+### Phase 1d: Safe Version Bumps — Yarn Runtime — ✅ COMPLETE
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 11 | Apply all Yarn runtime updates from §1b | Low | ✅ `71071377b` |
+
+### Phase 1e: Safe Version Bumps — Yarn Tooling — ✅ COMPLETE
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 12 | Apply all Yarn tooling updates from §1c | Low | ✅ `71071377b` |
+
+### Phase 2: Medium Effort (one session each) — ✅ COMPLETE
+
+| # | Action | Effort | Status |
+|---|---|---|---|
+| 13 | Replace `jquery` → `fetch` API (data-layer refactor, 7 files) | Medium | ✅ `9ddc08ce7` |
+| 14 | Replace `redux-localstorage` → custom persistence middleware | Medium | ✅ `1e3e4f2e6` |
+
+### Phase 3: Major Upgrades
+
+| # | Action | Cluster | Status | Notes |
+|---|---|---|---|---|
+| 15 | FluentValidation 9→12 | — | 🔲 Deferred | 253+ files; mechanical but high volume |
+| 16 | NLog 5→6 + NLog.Extensions.Logging 5→6 | NLog | ✅ `f059c83a9` | Introduced NLog/Moq proxy test failure (154 tests) — see `docs/TODO.md` |
+| 17 | Sentry 5→6 (.NET) + @sentry/browser 7→10 | Sentry | ✅ `f059c83a9` | Done in lockstep with NLog |
+| 18 | NUnit 3→4 + FluentAssertions 6→8 | Test Infra | ✅ `7f9d78cc3` | NUnit 4.5.1, FA 8.8.0; coverlet 6→8 still deferred |
+| 19 | RestSharp 106→114 | — | ✅ `7f9d78cc3` | Complete API rewrite; test-only impact |
+| 20 | react-router 5→7 + remove connected-react-router, history | Router | 🔲 Deferred | Very high effort; do on React 18 first |
+| 21 | React 18→19 + react-dom | React | 🔲 Deferred | After router migration |
+| 22 | redux 4→5 / react-redux 7→9 + redux-batched-actions + redux-actions | Redux | 🔲 Deferred | State management overhaul |
+| 23 | eslint 8→9 + prettier 2→3 + stylelint 15→17 | Linting | ✅ `7251abb36` | Flat config migration; ESLint 9 (not 10 — 10.x not yet stable) |
+| 24 | Selenium 3→4 | — | ✅ `7f9d78cc3` | Selenium.Support + Selenium.WebDriver 4.41.0 |
+| 25 | Ical.Net 4→5 | — | ✅ `7f9d78cc3` | CalDateTime.HasTime breaking change fixed |
+| 26 | `babel-plugin-transform-react-remove-prop-types` cleanup | — | ✅ `7f9d78cc3` | Dead babel plugin removed (prop-types already gone) |
 
 ---
 
 ## 8. Supply-Chain Reduction Summary
 
-If all Phase 1 + Phase 2 items are completed:
+Phase 1 + Phase 2 are **fully complete**:
 
-- **Packages removed:** ~10 (react-addons-shallow-compare, react-async-script,
+- **Packages removed:** 12 (react-addons-shallow-compare, react-async-script,
   element-class, @types/react-document-title, react-document-title, Diacritical.Net,
-  IPAddressRange, filesize, jquery, redux-localstorage, prop-types)
-- **Net bundle size reduction:** ~35KB+ (jquery alone is 28KB minified)
+  IPAddressRange, filesize, jquery, redux-localstorage, prop-types,
+  babel-plugin-transform-react-remove-prop-types)
+- **Net bundle size reduction:** ~35KB+ (jquery alone was 28KB minified)
 - **Supply-chain surface area:** Reduced by ~12% of production dependencies
 - **Radarr parity:** Aligned with Radarr's successful inlining of Diacritical.Net,
   IPAddressRange, and filesize (we keep qs since it has 126+ imports vs Radarr's 1)
+
+Phase 3 completion: **8 of 12 items done** (NLog, Sentry, NUnit, FA, RestSharp, ESLint/Prettier/Stylelint, Selenium, Ical.Net).
+
+**Remaining Phase 3 items (4):**
+
+| Item | Effort | Blocker |
+|---|---|---|
+| FluentValidation 9→12 | Very High (253+ files) | None — can start anytime |
+| react-router 5→7 | Very High | Should be done before React 19 |
+| React 18→19 | Very High | After router migration |
+| redux 4→5 / react-redux 7→9 | Very High | State management overhaul |
+
+**Minor deferred items:**
+- coverlet.collector 6→8 (low effort, update with next test infra change)
+- Microsoft.NET.Test.Sdk 17→18 (low effort)
+- css-loader 6→7, postcss-mixins 9→12, postcss-nested 6→7, webpack-cli 5→6, postcss-loader 7→8 (build tooling)
 
 ---
 
 ## 9. Execution Order
 
 ```
-Phase 1a (Items 1-2)    →  yarn install  →  yarn build (verify)
-Phase 1b (Items 3-8)    →  yarn build + dotnet build  →  test
-Phase 1c (Items 9-10)   →  dotnet build  →  dotnet test
-Phase 1d (Item 11)      →  yarn build  →  verify
-Phase 1e (Item 12)      →  yarn build + yarn lint  →  verify
-Phase 2  (Items 13-14)  →  yarn build + dotnet build  →  full test
-Phase 3  (Items 15-24)  →  individual migration sprints with their own specs
+Phase 1a (Items 1-2)    →  ✅ DONE — c02cb2000
+Phase 1b (Items 3-8)    →  ✅ DONE — c02cb2000
+Phase 1c (Items 9-10)   →  ✅ DONE — 71071377b
+Phase 1d (Item 11)      →  ✅ DONE — 71071377b
+Phase 1e (Item 12)      →  ✅ DONE — 71071377b
+Phase 2  (Items 13-14)  →  ✅ DONE — 9ddc08ce7, 1e3e4f2e6
+Phase 3  (Items 15-26)  →  8/12 DONE — 4 remaining (all Very High effort frontend framework upgrades)
 ```
 
-Each sub-phase should be committed separately so regressions are attributable.
-Phase 3 items each warrant their own specification document in `docs/`.
+Each sub-phase was committed separately so regressions are attributable.
+The remaining Phase 3 items each warrant their own specification document in `docs/`.
 
 ---
 
@@ -465,7 +468,7 @@ in this specification. They are listed here for completeness.
 | react-custom-scrollbars-2 | 4.5.0 | Functional; 1 file |
 | react-lazyload | 3.2.1 | Functional; 1 file |
 | babel-plugin-inline-classnames | 2.0.1 | Build optimisation; working |
-| babel-plugin-transform-react-remove-prop-types | 0.4.24 | Remove when prop-types removed |
+| babel-plugin-transform-react-remove-prop-types | ~~0.4.24~~ | ✅ Removed in `7f9d78cc3` (prop-types already gone) |
 | @babel/plugin-syntax-dynamic-import | 7.8.3 | Babel plugin; working |
 | @babel/plugin-proposal-export-default-from | 7.27.1 | Babel plugin; working |
 | css-modules-typescript-loader | 4.0.1 | Build tooling; working |
@@ -476,11 +479,11 @@ in this specification. They are listed here for completeness.
 | filemanager-webpack-plugin | 8.0.0 | Build plugin; working |
 | fork-ts-checker-webpack-plugin | 8.0.0 | Build plugin; working |
 | webpack-livereload-plugin | 3.0.2 | Dev-only; working |
-| eslint-config-prettier | 8.10.0 | Update with linting cluster |
-| eslint-plugin-prettier | 4.2.1 | Update with linting cluster |
-| eslint-plugin-filenames | 1.3.2 | Update with linting cluster |
-| eslint-plugin-simple-import-sort | 12.1.1 | Update with linting cluster |
-| eslint-plugin-react-hooks | 5.2.0 | Update with linting cluster |
+| eslint-config-prettier | 10.1.5 | ✅ Updated in `7251abb36` (ESLint 9 flat config) |
+| eslint-plugin-prettier | 5.4.0 | ✅ Updated in `7251abb36` |
+| eslint-plugin-filenames | ~~1.3.2~~ | ✅ Removed in `7251abb36` (replaced by eslint-plugin-filenames-simple) |
+| eslint-plugin-simple-import-sort | 12.1.1 | ✅ Updated in `7251abb36` |
+| eslint-plugin-react-hooks | 5.2.0 | ✅ Updated in `7251abb36` |
 | history | 4.10.1 | Remove with Router cluster |
 | redux-thunk | 2.4.2 | Update with Redux cluster |
 | reselect | 4.1.8 | Update with Redux cluster |
