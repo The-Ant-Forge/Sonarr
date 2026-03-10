@@ -5,28 +5,27 @@ import findSelectedFilters from 'Utilities/Filter/findSelectedFilters';
 import getSectionState from 'Utilities/State/getSectionState';
 import { set, updateServerSideCollection } from '../baseActions';
 
-function createFetchServerSideCollectionHandler(section, url, fetchDataAugmenter) {
-  return function(getState, payload, dispatch) {
+function createFetchServerSideCollectionHandler(
+  section,
+  url,
+  fetchDataAugmenter
+) {
+  return function (getState, payload, dispatch) {
     dispatch(set({ section, isFetching: true }));
 
     const sectionState = getSectionState(getState(), section, true);
     const page = payload.page || sectionState.page || 1;
 
-    const data = Object.assign({ page },
-      _.pick(sectionState, [
-        'pageSize',
-        'sortDirection',
-        'sortKey'
-      ]));
+    const data = Object.assign(
+      { page },
+      _.pick(sectionState, ['pageSize', 'sortDirection', 'sortKey'])
+    );
 
     if (fetchDataAugmenter) {
       fetchDataAugmenter(getState, payload, data);
     }
 
-    const {
-      selectedFilterKey,
-      filters
-    } = sectionState;
+    const { selectedFilterKey, filters } = sectionState;
 
     const selectedFilters = findSelectedFilters(selectedFilterKey, filters);
 
@@ -37,29 +36,33 @@ function createFetchServerSideCollectionHandler(section, url, fetchDataAugmenter
     const promise = createAjaxRequest({
       url,
       data,
-      traditional: true
+      traditional: true,
     }).request;
 
     promise.done((response) => {
-      dispatch(batchActions([
-        updateServerSideCollection({ section, data: response }),
+      dispatch(
+        batchActions([
+          updateServerSideCollection({ section, data: response }),
 
-        set({
-          section,
-          isFetching: false,
-          isPopulated: true,
-          error: null
-        })
-      ]));
+          set({
+            section,
+            isFetching: false,
+            isPopulated: true,
+            error: null,
+          }),
+        ])
+      );
     });
 
     promise.fail((xhr) => {
-      dispatch(set({
-        section,
-        isFetching: false,
-        isPopulated: false,
-        error: xhr
-      }));
+      dispatch(
+        set({
+          section,
+          isFetching: false,
+          isPopulated: false,
+          error: xhr,
+        })
+      );
     });
   };
 }

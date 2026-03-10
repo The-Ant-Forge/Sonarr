@@ -23,23 +23,27 @@ type Presets<T> = T & {
 };
 
 export interface AutoTaggingAppState
-  extends AppSectionState<AutoTagging>,
+  extends
+    AppSectionState<AutoTagging>,
     AppSectionDeleteState,
     AppSectionSaveState {}
 
 export interface AutoTaggingSpecificationAppState
-  extends AppSectionState<AutoTaggingSpecification>,
+  extends
+    AppSectionState<AutoTaggingSpecification>,
     AppSectionDeleteState,
     AppSectionSaveState,
     AppSectionSchemaState<AutoTaggingSpecification> {}
 
 export interface DelayProfileAppState
-  extends AppSectionListState<DelayProfile>,
+  extends
+    AppSectionListState<DelayProfile>,
     AppSectionDeleteState,
     AppSectionSaveState {}
 
 export interface DownloadClientAppState
-  extends AppSectionState<DownloadClient>,
+  extends
+    AppSectionState<DownloadClient>,
     AppSectionDeleteState,
     AppSectionSaveState,
     AppSectionSchemaState<Presets<DownloadClient>> {
@@ -47,11 +51,11 @@ export interface DownloadClientAppState
 }
 
 export interface DownloadClientOptionsAppState
-  extends AppSectionItemState<DownloadClientOptions>,
-    AppSectionSaveState {}
+  extends AppSectionItemState<DownloadClientOptions>, AppSectionSaveState {}
 
 export interface ImportListAppState
-  extends AppSectionState<ImportList>,
+  extends
+    AppSectionState<ImportList>,
     AppSectionDeleteState,
     AppSectionSaveState,
     AppSectionSchemaState<Presets<ImportList>> {
@@ -59,26 +63,27 @@ export interface ImportListAppState
 }
 
 export interface IndexerOptionsAppState
-  extends AppSectionItemState<IndexerOptions>,
-    AppSectionSaveState {}
+  extends AppSectionItemState<IndexerOptions>, AppSectionSaveState {}
 
 export interface CustomFormatAppState
-  extends AppSectionState<CustomFormat>,
+  extends
+    AppSectionState<CustomFormat>,
     AppSectionDeleteState,
     AppSectionSaveState {}
 
 export interface CustomFormatSpecificationAppState
-  extends AppSectionState<CustomFormatSpecification>,
+  extends
+    AppSectionState<CustomFormatSpecification>,
     AppSectionDeleteState,
     AppSectionSaveState,
     AppSectionSchemaState<Presets<CustomFormatSpecification>> {}
 
 export interface ImportListOptionsSettingsAppState
-  extends AppSectionItemState<ImportListOptionsSettings>,
-    AppSectionSaveState {}
+  extends AppSectionItemState<ImportListOptionsSettings>, AppSectionSaveState {}
 
 export interface ImportListExclusionsSettingsAppState
-  extends AppSectionState<ImportListExclusion>,
+  extends
+    AppSectionState<ImportListExclusion>,
     AppSectionSaveState,
     PagedAppSectionState,
     AppSectionDeleteState {

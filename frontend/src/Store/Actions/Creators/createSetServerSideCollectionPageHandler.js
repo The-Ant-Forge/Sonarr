@@ -2,7 +2,7 @@ import getSectionState from 'Utilities/State/getSectionState';
 import pages from 'Utilities/State/pages';
 
 function createSetServerSideCollectionPageHandler(section, page, fetchHandler) {
-  return function(getState, payload, dispatch) {
+  return function (getState, payload, dispatch) {
     const sectionState = getSectionState(getState(), section, true);
     const currentPage = sectionState.page || 1;
     let nextPage = 0;

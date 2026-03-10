@@ -16,18 +16,13 @@ function flattenProviderData(providerData) {
 }
 
 function requestAction(payload) {
-  const {
-    provider,
-    action,
-    providerData,
-    queryParams
-  } = payload;
+  const { provider, action, providerData, queryParams } = payload;
 
   const ajaxOptions = {
     url: `/${provider}/action/${action}`,
     contentType: 'application/json',
     method: 'POST',
-    data: JSON.stringify(flattenProviderData(providerData))
+    data: JSON.stringify(flattenProviderData(providerData)),
   };
 
   if (queryParams) {

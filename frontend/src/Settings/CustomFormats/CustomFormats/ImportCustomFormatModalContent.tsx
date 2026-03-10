@@ -167,7 +167,6 @@ function ImportCustomFormatModalContent({
   useEffect(() => {
     return () => {
       if (importTimeout.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         clearTimeout(importTimeout.current);
       }
     };

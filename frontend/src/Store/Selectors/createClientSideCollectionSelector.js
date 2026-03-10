@@ -6,40 +6,35 @@ import findSelectedFilters from 'Utilities/Filter/findSelectedFilters';
 
 function getSortClause(sortKey, sortDirection, sortPredicates) {
   if (sortPredicates && sortPredicates.hasOwnProperty(sortKey)) {
-    return function(item) {
+    return function (item) {
       return sortPredicates[sortKey](item, sortDirection);
     };
   }
 
-  return function(item) {
+  return function (item) {
     return item[sortKey];
   };
 }
 
 function filter(items, state) {
-  const {
-    selectedFilterKey,
-    filters,
-    customFilters,
-    filterPredicates
-  } = state;
+  const { selectedFilterKey, filters, customFilters, filterPredicates } = state;
 
   if (!selectedFilterKey) {
     return items;
   }
 
-  const selectedFilters = findSelectedFilters(selectedFilterKey, filters, customFilters);
+  const selectedFilters = findSelectedFilters(
+    selectedFilterKey,
+    filters,
+    customFilters
+  );
 
   return _.filter(items, (item) => {
     let i = 0;
     let accepted = true;
 
     while (accepted && i < selectedFilters.length) {
-      const {
-        key,
-        value,
-        type = filterTypes.EQUAL
-      } = selectedFilters[i];
+      const { key, value, type = filterTypes.EQUAL } = selectedFilters[i];
 
       if (filterPredicates && filterPredicates.hasOwnProperty(key)) {
         const predicate = filterPredicates[key];
@@ -89,7 +84,7 @@ function sort(items, state) {
     sortDirection,
     sortPredicates,
     secondarySortKey,
-    secondarySortDirection
+    secondarySortDirection,
   } = state;
 
   const clauses = [];
@@ -98,12 +93,17 @@ function sort(items, state) {
   clauses.push(getSortClause(sortKey, sortDirection, sortPredicates));
   orders.push(sortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
 
-  if (secondarySortKey &&
-      secondarySortDirection &&
-      (sortKey !== secondarySortKey ||
-       sortDirection !== secondarySortDirection)) {
-    clauses.push(getSortClause(secondarySortKey, secondarySortDirection, sortPredicates));
-    orders.push(secondarySortDirection === sortDirections.ASCENDING ? 'asc' : 'desc');
+  if (
+    secondarySortKey &&
+    secondarySortDirection &&
+    (sortKey !== secondarySortKey || sortDirection !== secondarySortDirection)
+  ) {
+    clauses.push(
+      getSortClause(secondarySortKey, secondarySortDirection, sortPredicates)
+    );
+    orders.push(
+      secondarySortDirection === sortDirections.ASCENDING ? 'asc' : 'desc'
+    );
   }
 
   return _.orderBy(items, clauses, orders);
@@ -123,7 +123,7 @@ function createClientSideCollectionSelector(section, uiSection) {
         ...sectionState,
         ...uiSectionState,
         items: sorted,
-        totalItems: state.items.length
+        totalItems: state.items.length,
       };
     }
   );

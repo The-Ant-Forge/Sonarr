@@ -14,26 +14,19 @@ module.exports = {
 
     // Stage 3
     ['@babel/plugin-transform-class-properties', { loose }],
-    '@babel/plugin-syntax-dynamic-import'
+    '@babel/plugin-syntax-dynamic-import',
   ],
   env: {
     development: {
       presets: [
         ['@babel/preset-react', { development: true }],
-        '@babel/preset-typescript'
+        '@babel/preset-typescript',
       ],
-      plugins: [
-        'babel-plugin-inline-classnames'
-      ]
+      plugins: ['babel-plugin-inline-classnames'],
     },
     production: {
-      presets: [
-        '@babel/preset-react',
-        '@babel/preset-typescript'
-      ],
-      plugins: [
-        'babel-plugin-transform-react-remove-prop-types'
-      ]
-    }
-  }
+      presets: ['@babel/preset-react', '@babel/preset-typescript'],
+      plugins: ['babel-plugin-transform-react-remove-prop-types'],
+    },
+  },
 };

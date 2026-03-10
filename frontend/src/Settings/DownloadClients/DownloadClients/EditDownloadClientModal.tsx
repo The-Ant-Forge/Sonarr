@@ -13,8 +13,7 @@ import EditDownloadClientModalContent, {
 
 const section = 'settings.downloadClients';
 
-interface EditDownloadClientModalProps
-  extends EditDownloadClientModalContentProps {
+interface EditDownloadClientModalProps extends EditDownloadClientModalContentProps {
   isOpen: boolean;
 }
 

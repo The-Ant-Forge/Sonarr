@@ -4,19 +4,23 @@ import migrate from 'Store/Migrators/migrate';
 
 const columnPaths = [];
 
-const paths = _.reduce([...actions], (acc, action) => {
-  if (action.persistState) {
-    action.persistState.forEach((path) => {
-      if (path.match(/\.columns$/)) {
-        columnPaths.push(path);
-      }
+const paths = _.reduce(
+  [...actions],
+  (acc, action) => {
+    if (action.persistState) {
+      action.persistState.forEach((path) => {
+        if (path.match(/\.columns$/)) {
+          columnPaths.push(path);
+        }
 
-      acc.push(path);
-    });
-  }
+        acc.push(path);
+      });
+    }
 
-  return acc;
-}, []);
+    return acc;
+  },
+  []
+);
 
 function mergeColumns(path, initialState, persistedState, computedState) {
   const initialColumns = _.get(initialState, path);
@@ -40,7 +44,11 @@ function mergeColumns(path, initialState, persistedState, computedState) {
       // We can't use a spread operator or Object.assign to clone the column
       // or any accessors are lost and can break translations.
       for (const prop of Object.keys(column)) {
-        Object.defineProperty(newColumn, prop, Object.getOwnPropertyDescriptor(column, prop));
+        Object.defineProperty(
+          newColumn,
+          prop,
+          Object.getOwnPropertyDescriptor(column, prop)
+        );
       }
 
       newColumn.isVisible = persistedColumn.isVisible;
@@ -51,7 +59,9 @@ function mergeColumns(path, initialState, persistedState, computedState) {
 
   // Add any columns added to the app in the initial position.
   initialColumns.forEach((initialColumn, index) => {
-    const persistedColumnIndex = persistedColumns.findIndex((i) => i.name === initialColumn.name);
+    const persistedColumnIndex = persistedColumns.findIndex(
+      (i) => i.name === initialColumn.name
+    );
     const column = Object.assign({}, initialColumn);
 
     if (persistedColumnIndex === -1) {
@@ -94,14 +104,19 @@ function merge(initialState, persistedState) {
 }
 
 const KEY = 'sonarr';
-const storageKey = window.Sonarr.instanceName.toLowerCase().replace(/ /g, '_') || KEY;
+const storageKey =
+  window.Sonarr.instanceName.toLowerCase().replace(/ /g, '_') || KEY;
 
 // Store enhancer that syncs a subset of Redux state to localStorage.
 // Replaces the redux-localstorage package with an inline implementation.
 export default function createPersistState() {
   // Migrate existing local storage value to new key if it does not already exist.
   // Leave old value as-is in case there are multiple instances using the same key.
-  if (storageKey !== KEY && localStorage.getItem(KEY) && !localStorage.getItem(storageKey)) {
+  if (
+    storageKey !== KEY &&
+    localStorage.getItem(KEY) &&
+    !localStorage.getItem(storageKey)
+  ) {
     localStorage.setItem(storageKey, localStorage.getItem(KEY));
   }
 
@@ -116,15 +131,14 @@ export default function createPersistState() {
       initialState = undefined;
     }
 
-    let persistedState;
-    let finalInitialState;
+    let persistedState = null;
+    let finalInitialState = initialState;
 
     try {
       persistedState = JSON.parse(localStorage.getItem(storageKey));
       finalInitialState = merge(initialState, persistedState);
     } catch (e) {
       console.warn('Failed to retrieve state from localStorage:', e);
-      finalInitialState = initialState;
     }
 
     const store = next(reducer, finalInitialState, enhancer);

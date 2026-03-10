@@ -2,7 +2,9 @@
 // Serializes an object to a query string with traditional array handling
 // (repeated keys rather than key[] notation).
 
-export default function serializeQueryParams(params: Record<string, unknown>): string {
+export default function serializeQueryParams(
+  params: Record<string, unknown>
+): string {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {

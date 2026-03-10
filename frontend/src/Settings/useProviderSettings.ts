@@ -10,8 +10,10 @@ import { PendingSection } from 'typings/pending';
 import Provider from 'typings/Provider';
 import { ApiError } from 'Utilities/Fetch/fetchJson';
 
-interface BaseManageProviderSettings<T extends ModelBase>
-  extends Omit<ReturnType<typeof selectSettings<T>>, 'settings'> {
+interface BaseManageProviderSettings<T extends ModelBase> extends Omit<
+  ReturnType<typeof selectSettings<T>>,
+  'settings'
+> {
   item: PendingSection<T>;
   updateValue: <K extends keyof T>(key: K, value: T[K]) => void;
   saveProvider: () => void;
@@ -21,8 +23,9 @@ interface BaseManageProviderSettings<T extends ModelBase>
   isTesting: boolean;
 }
 
-interface ManageProviderSettingsWithFields<T extends ModelBase>
-  extends BaseManageProviderSettings<T> {
+interface ManageProviderSettingsWithFields<
+  T extends ModelBase,
+> extends BaseManageProviderSettings<T> {
   updateFieldValue: (fieldProperties: Record<string, unknown>) => void;
 }
 

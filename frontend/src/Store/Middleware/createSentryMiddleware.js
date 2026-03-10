@@ -40,7 +40,7 @@ function createMiddleware() {
       // Adds a breadcrumb for reporting later (if necessary).
       sentry.addBreadcrumb({
         category: 'redux',
-        message: action.type
+        message: action.type,
       });
 
       return next(action);
@@ -51,35 +51,30 @@ function createMiddleware() {
       sentry.captureException(err, {
         extra: {
           action: identity(action),
-          state: identity(store.getState())
-        }
+          state: identity(store.getState()),
+        },
       });
     }
   };
 }
 
 export default function createSentryMiddleware() {
-  const {
-    analytics,
-    branch,
-    version,
-    release,
-    isProduction
-  } = window.Sonarr;
+  const { analytics, branch, version, release, isProduction } = window.Sonarr;
 
   if (!analytics) {
     return;
   }
 
-  const dsn = isProduction ? 'https://b80ca60625b443c38b242e0d21681eb7@sentry.sonarr.tv/13' :
-    'https://8dbaacdfe2ff4caf97dc7945aecf9ace@sentry.sonarr.tv/12';
+  const dsn = isProduction
+    ? 'https://b80ca60625b443c38b242e0d21681eb7@sentry.sonarr.tv/13'
+    : 'https://8dbaacdfe2ff4caf97dc7945aecf9ace@sentry.sonarr.tv/12';
 
   sentry.init({
     dsn,
     environment: isProduction ? 'production' : 'development',
     release,
     sendDefaultPii: true,
-    beforeSend: cleanseData
+    beforeSend: cleanseData,
   });
 
   const scope = sentry.getCurrentScope();

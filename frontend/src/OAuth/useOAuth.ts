@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import { type Error } from 'App/State/AppSectionState';
-import createAjaxRequest, { type AjaxOptions } from 'Utilities/createAjaxRequest';
+import createAjaxRequest, {
+  type AjaxOptions,
+} from 'Utilities/createAjaxRequest';
 import requestAction from 'Utilities/requestAction';
 
 const callbackUrl = `${window.location.origin}${window.Sonarr.urlBase}/oauth.html`;

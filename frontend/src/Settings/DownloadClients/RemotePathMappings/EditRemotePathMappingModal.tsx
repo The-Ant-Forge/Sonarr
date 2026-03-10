@@ -7,8 +7,7 @@ import EditRemotePathMappingModalContent, {
   EditRemotePathMappingModalContentProps,
 } from './EditRemotePathMappingModalContent';
 
-interface EditRemotePathMappingModalProps
-  extends EditRemotePathMappingModalContentProps {
+interface EditRemotePathMappingModalProps extends EditRemotePathMappingModalContentProps {
   isOpen: boolean;
 }
 

@@ -9,8 +9,7 @@ import EditSpecificationModalContent, {
 
 const section = 'settings.customFormatSpecifications';
 
-interface EditSpecificationModalProps
-  extends EditSpecificationModalContentProps {
+interface EditSpecificationModalProps extends EditSpecificationModalContentProps {
   isOpen: boolean;
 }
 

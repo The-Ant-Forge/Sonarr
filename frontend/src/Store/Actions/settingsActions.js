@@ -47,12 +47,10 @@ export const defaultState = {
   importListExclusions: importListExclusions.defaultState,
   importListOptions: importListOptions.defaultState,
   indexerFlags: indexerFlags.defaultState,
-  indexerOptions: indexerOptions.defaultState
+  indexerOptions: indexerOptions.defaultState,
 };
 
-export const persistState = [
-  'settings.importListExclusions.pageSize'
-];
+export const persistState = ['settings.importListExclusions.pageSize'];
 
 //
 // Action Handlers
@@ -69,24 +67,27 @@ export const actionHandlers = handleThunks({
   ...importListExclusions.actionHandlers,
   ...importListOptions.actionHandlers,
   ...indexerFlags.actionHandlers,
-  ...indexerOptions.actionHandlers
+  ...indexerOptions.actionHandlers,
 });
 
 //
 // Reducers
 
-export const reducers = createHandleActions({
-  ...autoTaggingSpecifications.reducers,
-  ...autoTaggings.reducers,
-  ...customFormatSpecifications.reducers,
-  ...customFormats.reducers,
-  ...delayProfiles.reducers,
-  ...downloadClients.reducers,
-  ...downloadClientOptions.reducers,
-  ...importLists.reducers,
-  ...importListExclusions.reducers,
-  ...importListOptions.reducers,
-  ...indexerFlags.reducers,
-  ...indexerOptions.reducers
-
-}, defaultState, section);
+export const reducers = createHandleActions(
+  {
+    ...autoTaggingSpecifications.reducers,
+    ...autoTaggings.reducers,
+    ...customFormatSpecifications.reducers,
+    ...customFormats.reducers,
+    ...delayProfiles.reducers,
+    ...downloadClients.reducers,
+    ...downloadClientOptions.reducers,
+    ...importLists.reducers,
+    ...importListExclusions.reducers,
+    ...importListOptions.reducers,
+    ...indexerFlags.reducers,
+    ...indexerOptions.reducers,
+  },
+  defaultState,
+  section
+);

@@ -66,7 +66,7 @@ export default function QualityProfileItemSize({
     ([sliderMinSize, sliderPreferredSize, sliderMaxSize]: [
       number,
       number,
-      number
+      number,
     ]) => {
       setSizes({
         minSize: sliderMinSize,

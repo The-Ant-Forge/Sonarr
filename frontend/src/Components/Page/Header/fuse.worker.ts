@@ -1,5 +1,3 @@
-// eslint-disable filenames/match-exported
-
 import Fuse from 'fuse.js';
 import { SuggestedSeries } from './SeriesSearchInput';
 

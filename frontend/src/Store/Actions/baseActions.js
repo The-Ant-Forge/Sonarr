@@ -21,7 +21,9 @@ export const set = createAction(SET);
 
 export const update = createAction(UPDATE);
 export const updateItem = createAction(UPDATE_ITEM);
-export const updateServerSideCollection = createAction(UPDATE_SERVER_SIDE_COLLECTION);
+export const updateServerSideCollection = createAction(
+  UPDATE_SERVER_SIDE_COLLECTION
+);
 
 export const setSettingValue = createAction(SET_SETTING_VALUE);
 export const clearPendingChanges = createAction(CLEAR_PENDING_CHANGES);

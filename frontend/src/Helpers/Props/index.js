@@ -23,5 +23,5 @@ export {
   sizes,
   scrollDirections,
   sortDirections,
-  tooltipPositions
+  tooltipPositions,
 };
