@@ -10,7 +10,7 @@ interface CssExports {
   'modalBackdrop': string;
   'modalContainer': string;
   'modalOpen': string;
-  'modalOpenIOS': string;
+  'modalOpenIos': string;
   'small': string;
 }
 export const cssExports: CssExports;

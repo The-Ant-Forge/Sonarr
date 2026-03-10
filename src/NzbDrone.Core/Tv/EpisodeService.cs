@@ -51,14 +51,14 @@ namespace NzbDrone.Core.Tv
         private readonly IEpisodeRepository _episodeRepository;
         private readonly IConfigService _configService;
         private readonly IUpgradableSpecification _upgradableSpecification;
-        private readonly ISeriesService _seriesService;
+        private readonly Lazy<ISeriesService> _seriesService;
         private readonly ICached<HashSet<int>> _cache;
         private readonly Logger _logger;
 
         public EpisodeService(IEpisodeRepository episodeRepository,
                               IConfigService configService,
                               IUpgradableSpecification upgradableSpecification,
-                              ISeriesService seriesService,
+                              Lazy<ISeriesService> seriesService,
                               ICacheManager cacheManager,
                               Logger logger)
         {
@@ -305,7 +305,7 @@ namespace NzbDrone.Core.Tv
 
             if (unmonitorOnCutoffMet)
             {
-                var series = _seriesService.GetSeries(episodeFile.SeriesId);
+                var series = _seriesService.Value.GetSeries(episodeFile.SeriesId);
                 var qualityProfile = series.QualityProfile.Value;
                 cutoffMet = !_upgradableSpecification.QualityCutoffNotMet(qualityProfile, episodeFile.Quality);
             }

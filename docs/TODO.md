@@ -2,38 +2,21 @@
 
 ## Known Issues
 
-### NLog 6.x / Moq Proxy Failure (154 Test Failures)
+### ~~NLog 6.x / Moq Proxy Failure (154 Test Failures)~~ — RESOLVED
 
-**Impact**: 154 unit tests fail in `NzbDrone.Core.Test` during SetUp
-
-**Error**:
-```
-System.ArgumentException : Can not create proxy for type NLog.Config.ILoggingConfigurationLoader
-because it is not accessible. Make it public, or internal and mark your assembly with
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2, PublicKey=...")]
-```
-
-**Root Cause**: NLog 6.x made `ILoggingConfigurationLoader` internal. Castle.Core's dynamic proxy (used by Moq) cannot create proxies for internal interfaces in strong-named assemblies without an `InternalsVisibleTo` attribute.
-
-**Options**:
-1. **Downgrade NLog** to 5.x where the interface was public (not ideal long-term)
-2. **Upgrade Moq** — check if a newer Moq version handles this differently
-3. **Change test base class** — avoid mocking NLog's internal config loader; use a real `LogFactory` or stub the logger differently
-4. **Contribute upstream** — ask NLog to add `InternalsVisibleTo` for `DynamicProxyGenAssembly2`
-
-**Priority**: High — blocks 154 tests from running
+**Fix**: Changed `MigrationTest.SetupLogging()` to use `new NLogLoggerProvider()` instead of `Mocker.Resolve<NLogLoggerProvider>()`. The AutoMoqer was trying to auto-mock `ILoggingConfigurationLoader` (made internal in NLog 6), but `NLogLoggerProvider` has a public parameterless constructor that uses `LogManager.LogFactory` directly, bypassing the need to resolve internal interfaces.
 
 ---
 
-### Korean Diacritics Test Failure
+### ~~Korean & Æ Diacritics Test Failures (2 failures)~~ — RESOLVED
 
-**Impact**: 1 test failure in `SeriesTitleFirstCharacterFixture`
+**Fix**: Added `.Normalize(NormalizationForm.FormC)` recomposition at the end of `RemoveDiacritics()` to recompose Hangul jamos back into syllable characters. Added Æ/æ ligature mappings to the `AdditionalDiacritics` dictionary.
 
-**Error**: Korean character decomposition produces different first character than expected (`ᄌ` vs `좀`)
+---
 
-**Root Cause**: Related to removal of `AdditionalDiacriticsProvider` / changes to `StringExtensions.cs` diacritics handling. Unicode NormalizationForm.FormD decomposes Hangul syllables into Jamo, so `좀` → `좀` and the first character becomes the leading consonant `ᄌ` rather than the full syllable.
+### ~~DryIoc Recursive Dependency (8 Test Failures)~~ — RESOLVED
 
-**Priority**: Medium — affects series folder naming for Korean titles
+**Fix**: Changed `ISeriesService` to `Lazy<ISeriesService>` in `EpisodeService` constructor. The circular dependency (`EpisodeService` ↔ `SeriesService`) was introduced by the Disable Monitoring feature. `Lazy<T>` defers resolution until runtime, breaking the DI cycle.
 
 ## Planned Work
 

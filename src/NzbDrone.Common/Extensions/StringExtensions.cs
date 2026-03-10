@@ -15,8 +15,11 @@ namespace NzbDrone.Common.Extensions
 
         private static readonly Dictionary<char, string> AdditionalDiacritics = new Dictionary<char, string>
         {
-            { '\u00f0', "d" },  // ð
+            { '\u00c6', "AE" }, // Æ
+            { '\u00e6', "ae" }, // æ
             { '\u00d0', "D" },  // Ð
+            { '\u00f0', "d" },  // ð
+            { '\u00de', "Th" }, // Þ
             { '\u00fe', "th" }, // þ
         };
 
@@ -97,7 +100,7 @@ namespace NzbDrone.Common.Extensions
                 }
             }
 
-            return sb.ToString();
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
         public static string TrimEnd(this string text, string postfix)
