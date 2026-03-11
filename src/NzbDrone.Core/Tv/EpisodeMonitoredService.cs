@@ -90,9 +90,9 @@ namespace NzbDrone.Core.Tv
                     break;
 
                 case MonitorTypes.LastSeason:
-                #pragma warning disable CS0612
+                #pragma warning disable CS0612, CS0618 // Obsolete - kept for DB backwards compat
                 case MonitorTypes.LatestSeason:
-                #pragma warning restore CS0612
+                #pragma warning restore CS0612, CS0618
                     _logger.Debug("[{0}] Monitoring latest season episodes", series.Title);
 
                     ToggleEpisodesMonitoredState(episodes, e => e.SeasonNumber > 0 && e.SeasonNumber == lastSeason);

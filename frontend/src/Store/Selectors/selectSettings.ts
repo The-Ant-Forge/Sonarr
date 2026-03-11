@@ -77,10 +77,8 @@ function mapFailure(failure: ValidationFailure): Failure {
     infoLink: failure.infoLink,
     detailedDescription: failure.detailedDescription,
 
-    // TODO: Remove these renamed properties
+    // TODO: Remove once consumers migrate to errorMessage
     message: failure.errorMessage,
-    link: failure.infoLink,
-    detailedMessage: failure.detailedDescription,
   };
 }
 

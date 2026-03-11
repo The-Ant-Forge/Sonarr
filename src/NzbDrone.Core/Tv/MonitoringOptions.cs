@@ -20,7 +20,7 @@ namespace NzbDrone.Core.Tv
         FirstSeason,
         LastSeason,
 
-        [Obsolete]
+        [Obsolete("Use LastSeason instead. Kept to preserve enum ordinal values in DB.")]
         LatestSeason,
 
         Pilot,
