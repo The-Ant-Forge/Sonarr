@@ -22,7 +22,21 @@ Each is a Very High effort project warranting its own spec document.
 | **React 18→19** | Very High | Many | After router | `react-window` v2 requires React 19 |
 | **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions` |
 
+## Code Review Deferred Items
+
+From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
+
+- [ ] **TypeScript migration** (13.1) — 25+ JS files / 4,700+ LOC, opportunistic alongside redux migration
+- [ ] **V5 API contract tests** (16.1) — prioritize highest-risk endpoints first
+- [ ] **Full test coverage sprint** (8.2) — 73% of source files untested
+- [ ] **Migration/recovery test suite** (19.2) — DB migration tests, backup/restore compatibility
+- [ ] **Generic resource mapper** (3.3) — only if it unlocks a concrete fix
+- [ ] **HostConfigResource split** (4.1) — high compatibility cost, defer
+- [ ] **Lodash removal** (14.2) — replace when editing those files
+- [ ] **jQuery removal** (14.3) — replace with fetch when touching
+
 ## Other Planned Work
 
-- [ ] Code review (see `CLAUDE.md` — Code Review Phases)
+- [x] Code review spec (see `docs/spec-code-review-260310.md`)
+- [ ] Code review implementation (Lanes A → B → C per spec)
 - [ ] Unmonitor feature refinements (if needed after testing)

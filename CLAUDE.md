@@ -107,6 +107,12 @@ Before committing, check if `docs/`, `README.md` and `CLAUDE.md` need updating t
 2. Run tests/linting after each change
 3. Only then commit/push
 
+### Codex CLI for second opinions
+The Codex CLI (`codex`) is installed globally via npm. Use it for spec/plan review:
+```bash
+codex exec -o /tmp/output.md "Read <file> and review it. Tell me what we missed, priority changes, and what's not worth the effort."
+```
+
 ### Documentation or commentary
 Never use real TV show names. Always make up example ones.
 
