@@ -25,6 +25,12 @@
   white-space: pre-wrap;
 }
 
+.stackTrace {
+  margin: 10px 0;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
 .version {
   margin-top: 20px;
 }

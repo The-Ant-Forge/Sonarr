@@ -73,7 +73,6 @@ function AddNewSeriesSearchResult({ series }: AddNewSeriesSearchResultProps) {
             className={styles.poster}
             images={images}
             size={250}
-            overflow={true}
             lazy={false}
             title={title}
           />

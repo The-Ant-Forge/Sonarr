@@ -14,7 +14,7 @@ import {
   RenderSuggestion,
   SuggestionsFetchRequestedParams,
 } from 'react-autosuggest';
-import { useDebouncedCallback } from 'use-debounce';
+import useDebouncedCallback from 'Helpers/Hooks/useDebouncedCallback';
 import { Kind } from 'Helpers/Props/kinds';
 import { InputChanged } from 'typings/inputs';
 import AutoSuggestInput from '../AutoSuggestInput';

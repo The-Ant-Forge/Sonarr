@@ -94,6 +94,8 @@ $hoverScale: 1.05;
 .overview {
   composes: link;
 
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 0;
 }

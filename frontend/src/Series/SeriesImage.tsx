@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import LazyLoad from 'react-lazyload';
 import translate from 'Utilities/String/translate';
 import { CoverType, Image } from './Series';
 
@@ -29,7 +28,6 @@ export interface SeriesImageProps {
   placeholder: string;
   size?: number;
   lazy?: boolean;
-  overflow?: boolean;
   title: string;
   onError?: () => void;
   onLoad?: () => void;
@@ -45,7 +43,6 @@ function SeriesImage({
   placeholder,
   size = 250,
   lazy = true,
-  overflow = false,
   title,
   onError,
   onLoad,
@@ -121,35 +118,13 @@ function SeriesImage({
     return <img className={className} style={style} src={placeholder} />;
   }
 
-  if (lazy) {
-    return (
-      <LazyLoad
-        height={size}
-        offset={100}
-        overflow={overflow}
-        placeholder={
-          <img className={className} style={style} src={placeholder} />
-        }
-      >
-        <img
-          alt={alt}
-          className={className}
-          style={style}
-          src={url}
-          rel="noreferrer"
-          onError={handleError}
-          onLoad={handleLoad}
-        />
-      </LazyLoad>
-    );
-  }
-
   return (
     <img
       alt={alt}
       className={className}
       style={style}
       src={isLoaded ? url : placeholder}
+      loading={lazy ? 'lazy' : undefined}
       onError={handleError}
       onLoad={handleLoad}
     />

@@ -199,7 +199,6 @@ function SeriesIndexRow(props: SeriesIndexRowProps) {
                     className={styles.bannerImage}
                     images={images}
                     lazy={false}
-                    overflow={true}
                     title={title}
                     onError={onBannerLoadError}
                     onLoad={onBannerLoad}

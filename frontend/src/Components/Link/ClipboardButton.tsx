@@ -1,4 +1,3 @@
-import copy from 'copy-to-clipboard';
 import React, { useCallback, useEffect, useState } from 'react';
 import FormInputButton from 'Components/Form/FormInputButton';
 import Icon from 'Components/Icon';
@@ -40,11 +39,7 @@ export default function ClipboardButton({
 
   const handleClick = useCallback(async () => {
     try {
-      if ('clipboard' in navigator) {
-        await navigator.clipboard.writeText(value);
-      } else {
-        copy(value);
-      }
+      await navigator.clipboard.writeText(value);
 
       setState('success');
     } catch (e) {

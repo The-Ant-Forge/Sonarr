@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import StackTrace from 'stacktrace-js';
+import React from 'react';
 import translate from 'Utilities/String/translate';
 import styles from './ErrorBoundaryError.css';
 
@@ -24,20 +23,6 @@ function ErrorBoundaryError(props: ErrorBoundaryErrorProps) {
     info,
   } = props;
 
-  const [detailedError, setDetailedError] = useState<
-    StackTrace.StackFrame[] | null
-  >(null);
-
-  useEffect(() => {
-    if (error) {
-      StackTrace.fromError(error).then((de) => {
-        setDetailedError(de);
-      });
-    } else {
-      setDetailedError(null);
-    }
-  }, [error, setDetailedError]);
-
   return (
     <div className={className}>
       <div className={messageClassName}>{message}</div>
@@ -52,14 +37,8 @@ function ErrorBoundaryError(props: ErrorBoundaryErrorProps) {
       <details className={detailsClassName}>
         {error ? <div>{error.message}</div> : null}
 
-        {detailedError ? (
-          detailedError.map((d, index) => {
-            return (
-              <div key={index}>
-                {`  at ${d.functionName} (${d.fileName}:${d.lineNumber}:${d.columnNumber})`}
-              </div>
-            );
-          })
+        {error?.stack ? (
+          <pre className={styles.stackTrace}>{error.stack}</pre>
         ) : (
           <div>{info.componentStack}</div>
         )}

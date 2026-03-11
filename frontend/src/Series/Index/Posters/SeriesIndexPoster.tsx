@@ -187,7 +187,6 @@ function SeriesIndexPoster(props: SeriesIndexPosterProps) {
             images={images}
             size={250}
             lazy={false}
-            overflow={true}
             title={title}
             onError={onPosterLoadError}
             onLoad={onPosterLoad}

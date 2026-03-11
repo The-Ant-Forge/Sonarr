@@ -6,6 +6,7 @@ interface CssExports {
   'image': string;
   'imageContainer': string;
   'message': string;
+  'stackTrace': string;
   'version': string;
 }
 export const cssExports: CssExports;

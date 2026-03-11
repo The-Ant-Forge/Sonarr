@@ -1,4 +1,3 @@
-import jdu from 'jdu';
 import React, { SyntheticEvent, useCallback, useState } from 'react';
 import {
   ChangeEvent,
@@ -48,10 +47,17 @@ function AutoCompleteInput({
 
   const handleSuggestionsFetchRequested = useCallback(
     ({ value: newValue }: SuggestionsFetchRequestedParams) => {
-      const lowerCaseValue = jdu.replace(newValue).toLowerCase();
+      const lowerCaseValue = newValue
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
 
       const filteredValues = values.filter((v) => {
-        return jdu.replace(v).toLowerCase().includes(lowerCaseValue);
+        return v
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .includes(lowerCaseValue);
       });
 
       setSuggestions(filteredValues);

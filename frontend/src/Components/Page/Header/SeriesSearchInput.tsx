@@ -12,9 +12,9 @@ import React, {
 } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { useDispatch } from 'react-redux';
-import { useDebouncedCallback } from 'use-debounce';
 import Icon from 'Components/Icon';
 import LoadingIndicator from 'Components/Loading/LoadingIndicator';
+import useDebouncedCallback from 'Helpers/Hooks/useDebouncedCallback';
 import useKeyboardShortcuts from 'Helpers/Hooks/useKeyboardShortcuts';
 import { icons } from 'Helpers/Props';
 import Series from 'Series/Series';

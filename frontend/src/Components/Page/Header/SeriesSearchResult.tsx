@@ -44,7 +44,6 @@ function SeriesSearchResult(props: SeriesSearchResultProps) {
         images={images}
         size={250}
         lazy={false}
-        overflow={true}
         title={title}
       />
 

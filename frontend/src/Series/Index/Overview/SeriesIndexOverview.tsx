@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
-import TextTruncate from 'react-text-truncate';
 import CommandNames from 'Commands/CommandNames';
 import { useExecuteCommand } from 'Commands/useCommands';
 import IconButton from 'Components/Link/IconButton';
@@ -170,7 +169,6 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
                 images={images}
                 size={250}
                 lazy={false}
-                overflow={true}
                 title={title}
               />
             </Link>
@@ -222,13 +220,16 @@ function SeriesIndexOverview(props: SeriesIndexOverviewProps) {
 
           <div className={styles.details}>
             <div className={styles.overviewContainer}>
-              <Link className={styles.overview} to={link}>
-                <TextTruncate
-                  line={Math.floor(
+              <Link
+                className={styles.overview}
+                to={link}
+                style={{
+                  WebkitLineClamp: Math.floor(
                     overviewHeight / (defaultFontSize * lineHeight)
-                  )}
-                  text={overview}
-                />
+                  ),
+                }}
+              >
+                {overview}
               </Link>
 
               {overviewOptions.showTags ? (
