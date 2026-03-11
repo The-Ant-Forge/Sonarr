@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Notifications.SendGrid
 
         public string BaseUrl { get; set; }
 
-        [FieldDefinition(1, Label = "ApiKey", HelpText = "NotificationsSendGridSettingsApiKeyHelpText", HelpLink = "https://sendgrid.com/docs/ui/account-and-settings/api-keys/#creating-an-api-key")]
+        [FieldDefinition(1, Label = "ApiKey", HelpText = "NotificationsSendGridSettingsApiKeyHelpText", HelpLink = "https://sendgrid.com/docs/ui/account-and-settings/api-keys/#creating-an-api-key", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
         [FieldDefinition(2, Label = "NotificationsEmailSettingsFromAddress")]

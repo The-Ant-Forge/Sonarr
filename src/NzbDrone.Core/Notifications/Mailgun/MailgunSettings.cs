@@ -25,7 +25,7 @@ namespace NzbDrone.Core.Notifications.Mailgun
           Recipients = Array.Empty<string>();
       }
 
-      [FieldDefinition(0, Label = "ApiKey", HelpText = "NotificationsMailgunSettingsApiKeyHelpText")]
+      [FieldDefinition(0, Label = "ApiKey", HelpText = "NotificationsMailgunSettingsApiKeyHelpText", Privacy = PrivacyLevel.ApiKey)]
       public string ApiKey { get; set; }
 
       [FieldDefinition(1, Label = "NotificationsMailgunSettingsUseEuEndpoint", HelpText = "NotificationsMailgunSettingsUseEuEndpointHelpText", Type = FieldType.Checkbox)]

@@ -27,7 +27,7 @@ namespace NzbDrone.Core.ImportLists.Plex
 
         public override string BaseUrl { get; set; }
 
-        [FieldDefinition(0, Label = "ImportListsSettingsAccessToken", Type = FieldType.Textbox, Hidden = HiddenType.Hidden)]
+        [FieldDefinition(0, Label = "ImportListsSettingsAccessToken", Type = FieldType.Textbox, Hidden = HiddenType.Hidden, Privacy = PrivacyLevel.ApiKey)]
         public string AccessToken { get; set; }
 
         [FieldDefinition(99, Label = "ImportListsPlexSettingsAuthenticateWithPlex", Type = FieldType.OAuth)]

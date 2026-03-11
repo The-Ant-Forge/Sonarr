@@ -29,6 +29,11 @@ namespace Sonarr.Api.V3.FileSystem
         [Produces("application/json")]
         public IActionResult GetContents(string path, bool includeFiles = false, bool allowFoldersWithoutTrailingSlashes = false)
         {
+            if (!ValidatePath(path, allowEmpty: true))
+            {
+                return BadRequest(new { message = "Invalid path" });
+            }
+
             return Ok(_fileSystemLookupService.LookupContents(path, includeFiles, allowFoldersWithoutTrailingSlashes));
         }
 
@@ -36,6 +41,11 @@ namespace Sonarr.Api.V3.FileSystem
         [Produces("application/json")]
         public object GetEntityType(string path)
         {
+            if (!ValidatePath(path))
+            {
+                return new { type = "folder" };
+            }
+
             if (_diskProvider.FileExists(path))
             {
                 return new { type = "file" };
@@ -49,7 +59,7 @@ namespace Sonarr.Api.V3.FileSystem
         [Produces("application/json")]
         public object GetMediaFiles(string path)
         {
-            if (!_diskProvider.FolderExists(path))
+            if (!ValidatePath(path) || !_diskProvider.FolderExists(path))
             {
                 return Array.Empty<string>();
             }
@@ -60,6 +70,26 @@ namespace Sonarr.Api.V3.FileSystem
                 RelativePath = path.GetRelativePath(f),
                 Name = Path.GetFileName(f)
             });
+        }
+
+        // Defense-in-depth: reject obviously malformed paths.
+        // This is an admin-only endpoint (authentication required) so full
+        // sandboxing is not appropriate — admins need to browse the filesystem
+        // to configure root folders and import paths.
+        private static bool ValidatePath(string path, bool allowEmpty = false)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return allowEmpty;
+            }
+
+            // Block path traversal sequences
+            if (path.Contains(".."))
+            {
+                return false;
+            }
+
+            return path.IsPathValid(PathValidationType.CurrentOs);
         }
     }
 }

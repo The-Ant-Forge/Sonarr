@@ -31,7 +31,7 @@ namespace NzbDrone.Core.ImportLists.Sonarr
         [FieldDefinition(0, Label = "ImportListsSonarrSettingsFullUrl", HelpText = "ImportListsSonarrSettingsFullUrlHelpText")]
         public override string BaseUrl { get; set; } = string.Empty;
 
-        [FieldDefinition(1, Label = "ApiKey", HelpText = "ImportListsSonarrSettingsApiKeyHelpText")]
+        [FieldDefinition(1, Label = "ApiKey", HelpText = "ImportListsSonarrSettingsApiKeyHelpText", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
         [FieldDefinition(2, Label = "ImportListsSonarrSettingsSyncSeasonMonitoring", HelpText = "ImportListsSonarrSettingsSyncSeasonMonitoringHelpText", Type = FieldType.Checkbox)]

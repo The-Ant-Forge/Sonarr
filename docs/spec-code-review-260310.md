@@ -14,8 +14,8 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 
 | # | Category | Finding | Action | Impact | Effort | Risk |
 |---|---|---|---|---|---|---|
-| 6.1 | Security | `FileSystemController` accepts arbitrary paths | Add path validation, canonicalization, symlink/UNC checks | H | L | L |
-| 6.2 | Security | Credential fields lack `Privacy` annotations | Add `PrivacyLevel.ApiKey` to sensitive fields | H | L | L |
+| 6.1 | Security | `FileSystemController` accepts arbitrary paths | ~~Add path validation~~ DONE — defense-in-depth validation added; full sandboxing not appropriate (admin endpoint) | H | L | L |
+| 6.2 | Security | Credential fields lack `Privacy` annotations | ~~Add `PrivacyLevel.ApiKey`~~ DONE — 5 provider settings annotated; HostConfigResource verified correct | H | L | L |
 | 6.3 | Security | X509 certificate validation — zero tests | Add unit tests for accept/reject scenarios | H | M | L |
 | 15.1 | Logging | SignalR logs full message bodies (data leak) | Redact sensitive fields; route through SignalRLogger | H | L | L |
 | 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Review outbound URL paths for private-network access, redirect following, scheme restrictions | H | M | M |
@@ -191,21 +191,21 @@ Already addressed comprehensively in the dependency audit (`docs/Spec-Dependency
 
 ### 6. Security
 
-**6.1 Path traversal risk** (HIGH)
-- `FileSystemController.cs:30-32` — `GetContents(string path)` accepts arbitrary path parameter with no validation
-- `FileSystemController.cs:50` — `GetMediaFiles(string path)` directly passes user input to `GetVideoFiles()`
-- Mitigation note: line 44 has comment "Return folder even if doesn't exist to avoid leaking" (partial awareness)
+**6.1 Path validation (defense-in-depth)** — DONE
+- `FileSystemController` is an admin-only filesystem browser — by design it needs unrestricted access so admins can select root folders and import paths. Radarr has the identical pattern. Full sandboxing would break the UI.
+- **Applied**: Added `ValidatePath()` to both V3 and V5 controllers rejecting `..` traversal sequences and invalid OS paths. Documented design intent in code comments.
+- Risk is mitigated by authentication (API key required for all requests).
 
-**Action**: Add path validation — ensure paths are within configured root folders or allowed directories. Consider allowlist approach.
+**6.2 Credential field privacy** — DONE
+- 5 provider settings fields were missing `Privacy = PrivacyLevel.ApiKey` annotations:
+  - `MailgunSettings.ApiKey`
+  - `SendGridSettings.ApiKey`
+  - `JoinSettings.ApiKey`
+  - `SonarrSettings.ApiKey` (import list)
+  - `PlexListSettings.AccessToken`
+- `HostConfigResource` fields (Password, ApiKey, SslCertPassword, ProxyPassword) don't use `[FieldDefinition]` — they're plain REST properties. Password is already a hash; other values are intentionally returned to the authenticated admin UI. No change needed.
 
-**6.2 Credential field privacy**
-- `HostConfigResource` fields missing `Privacy` annotations:
-  - `Password` (line 21)
-  - `SslCertPassword` (line 30)
-  - `ProxyPassword` (line 42)
-- `TwitterSettings.cs:40-50` correctly uses `Privacy = PrivacyLevel.ApiKey` — inconsistent application
-
-**Action**: Add `Privacy = PrivacyLevel.ApiKey` (or `Password`) to all sensitive fields in all settings/resource types.
+**Action**: Complete. 5 settings fields annotated, 4 HostConfigResource fields verified as correctly handled.
 
 **6.3 X509 certificate validation untested**
 - `X509CertificateValidationService.cs` — security-critical SSL/TLS validation code with zero tests

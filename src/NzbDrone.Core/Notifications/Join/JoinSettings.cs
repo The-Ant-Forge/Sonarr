@@ -22,7 +22,7 @@ namespace NzbDrone.Core.Notifications.Join
             Priority = (int)JoinPriority.Normal;
         }
 
-        [FieldDefinition(0, Label = "ApiKey", HelpText = "NotificationsJoinSettingsApiKeyHelpText", HelpLink = "https://joinjoaomgcd.appspot.com/")]
+        [FieldDefinition(0, Label = "ApiKey", HelpText = "NotificationsJoinSettingsApiKeyHelpText", HelpLink = "https://joinjoaomgcd.appspot.com/", Privacy = PrivacyLevel.ApiKey)]
         public string ApiKey { get; set; }
 
         [FieldDefinition(1, Label = "NotificationsJoinSettingsDeviceIds", HelpText = "NotificationsJoinSettingsDeviceIdsHelpText", Hidden = HiddenType.HiddenIfNotSet)]
