@@ -18,8 +18,8 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 6.2 | Security | Credential fields lack `Privacy` annotations | ~~Add `PrivacyLevel.ApiKey`~~ DONE — 5 provider settings annotated; HostConfigResource verified correct | H | L | L |
 | 6.3 | Security | X509 certificate validation — zero tests | ~~Add unit tests~~ DONE — 17 tests covering all code paths (sender types, localhost bypass, validation modes, local/public IPs, error flags). Commit `256a385` | H | M | L |
 | 15.1 | Logging | SignalR logs full message bodies (data leak) | ~~Redact sensitive fields~~ DONE — removed body payload from debug log | H | L | L |
-| 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Review outbound URL paths for private-network access, redirect following, scheme restrictions | H | M | M |
-| 18.2 | Network Security | API-key scope & auth/authz gaps | Audit local-network trust, CSRF/CORS, websocket auth, stale auth state | H | M | M |
+| 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Assessed — URL schemes properly restricted. Admin-trust model makes direct SSRF acceptable. Only concern: redirect following has no target validation (external→internal bounce). Deferred as hardening item. | H | M | M |
+| 18.2 | Network Security | API-key scope & auth/authz gaps | Assessed — Default policy requires auth on all endpoints. SignalR properly protected. CORS safe (API key auth, not cookies). IP-bypass intentional. Minor: cookie flags not explicit, 7-day session. No critical gaps. | H | M | M |
 | 18.3 | Network Security | Secret handling across layers | ~~Verify secrets protected~~ Partially DONE — ProwlProxy API key leak fixed (commit `f443199`). HostConfigResource verified admin-only. Provider settings protected via SchemaBuilder. Remaining: full audit of exception messages, UI state. | H | M | L |
 | 19.1 | Migrations | Migration 171 incomplete data migration | Assessed — `PreferredWordScore` was renamed to `CustomFormatScore` in Migration 197 and is actively used in UI History details. The TODO is effectively resolved; the data field is useful, not stale. No action needed. | H | M | M |
 | 19.2 | Migrations | No migration/recovery test coverage | Add tests for forward-only migrations, backup restore, startup after interrupted upgrade | H | H | M |
@@ -420,21 +420,37 @@ High-priority TODOs requiring attention:
 
 ### 18. Network Boundary Security *(added after Codex review)*
 
-**18.1 SSRF via user-configurable URLs**
-- Sonarr makes outbound HTTP calls to user-specified endpoints: indexers, download clients, webhooks, notification targets, import lists
-- Risk: private-network access (SSRF), redirect following to internal hosts, proxy bypass, scheme abuse (file://, gopher://)
-- Credential leakage in exceptions/logs when requests to external services fail
+**18.1 SSRF via user-configurable URLs** — Assessed
 
-**Action**: Review all provider/webhook/indexer/notification URL paths. Validate schemes (http/https only), block RFC1918/loopback addresses, limit redirect following.
+Findings:
+- **URL scheme restriction**: Properly restricted to HTTP/HTTPS via `HttpUri.cs` regex and `ValidRootUrl()`. File/gopher/dict/etc. schemes are blocked. **No action needed.**
+- **Internal address validation**: No validation prevents user-configurable URLs (indexers, webhooks, import lists, notifications, download clients) from targeting RFC1918/loopback/link-local addresses. However, Sonarr is admin-only — the person configuring URLs *is* the admin, so direct SSRF is effectively "attacking yourself."
+- **Redirect following (main concern)**: `HttpClient.cs` lines 71-98 implement manual redirect handling that follows `Location` headers to ANY URL with no target validation. Maximum 5 redirects enforced, but no IP range check. This allows external→internal bounce attacks (e.g., external service returns `302` to `http://169.254.169.254/latest/meta-data`).
+- **Existing utility**: `IpAddressExtensions.IsLocalAddress()` already exists and correctly identifies RFC1918/loopback/link-local ranges, but is only used for cert validation and auth bypass — not for URL validation.
+- **Download clients**: Use host+port rather than full URLs (slightly better, but still no IP range check).
 
-**18.2 Authorization & session review**
-- API-key scope — are all endpoints properly gated?
-- Local-network trust assumptions — what's accessible without auth?
-- CSRF/CORS posture — are origin checks enforced?
-- WebSocket (SignalR) authorization — can unauthenticated clients subscribe?
-- Stale/partial auth state — can sensitive endpoints be called with expired credentials?
+**Assessment**: Admin-trust model makes direct SSRF acceptable. The only actionable item is redirect target validation to prevent external→internal bounce attacks. This is medium priority — it requires a compromised external service returning malicious redirects.
 
-**Action**: Audit each endpoint category. Document auth requirements. Add tests for unauthorized access paths.
+**Action**: Consider adding `IsLocalAddress()` check to the redirect handler in `HttpClient.cs`. Low effort, medium impact. Deferred as a hardening item — not a critical vulnerability given the admin-only model.
+
+**18.2 Authorization & session review** — Assessed
+
+Findings:
+- **Default auth policy**: `Startup.cs` sets `FallbackPolicy` requiring authenticated user on all endpoints. Correct defensive default. **No gaps found.**
+- **Anonymous endpoints**: Only `/ping` (health check), `/login` (auth flow), `/content/{path}` (static assets) are anonymous. All appropriate.
+- **SignalR**: Hub at `/signalr/messages` requires `"SignalR"` auth policy. API key accepted via `access_token` query param or `X-Api-Key` header. **Properly protected.**
+- **IP-based auth bypass**: `AuthenticationRequiredType.DisabledForLocalAddresses` bypasses auth for RFC1918/loopback/link-local. Intentional for self-hosted deployments. `ForwardedHeaders` config only trusts known private ranges, mitigating IP spoofing via X-Forwarded-For.
+- **CORS**: `AllowAnyOrigin()` on API policy looks alarming but is safe — API uses key-based auth (header/query), not cookies. CSRF attacks exploit auto-sent cookies; API key headers are not auto-sent by browsers.
+- **initialize.json**: Exposes API key to authenticated UI users. By design — frontend needs it for API calls. Protected by `[Authorize(Policy = "UI")]`.
+- **Cookie security**: Forms auth uses 7-day sliding expiration. `HttpOnly`, `Secure`, and `SameSite` flags rely on ASP.NET Core defaults (safe but not explicit).
+- **Password storage**: User model stores PBKDF2 params (password, salt, iterations). Implementation appears correct.
+
+**Assessment**: Auth architecture is well-designed for a self-hosted admin app. No critical gaps found.
+
+**Action (minor hardening)**:
+1. Explicitly set cookie security flags (`HttpOnly = true`, `Secure = SameAsRequest`, `SameSite = Strict`) rather than relying on framework defaults — low effort, defensive coding.
+2. Consider reducing 7-day session expiration to 1-2 days.
+Both are minor improvements, not vulnerabilities. Deferred to a future hardening pass.
 
 **18.3 Secret handling audit** — Partially DONE
 
@@ -533,8 +549,8 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 3. ~~**15.1** SignalR log redaction~~ — **DONE** (commit `3c046bf`)
 4. **18.3** Secret handling audit — **Partially DONE** (ProwlProxy API key leak fixed: commit `f443199`; HostConfigResource admin-only; SchemaBuilder redaction verified)
 5. ~~**6.3** X509 certificate validation tests~~ — **DONE** (commit `256a385`)
-6. **18.1** SSRF review — outbound URL validation for indexers, webhooks, download clients
-7. **18.2** Auth/authz audit — API-key scope, CSRF/CORS, websocket auth
+6. **18.1** SSRF review — **Assessed** (URL schemes restricted; admin-trust model acceptable; redirect target validation deferred as hardening)
+7. **18.2** Auth/authz audit — **Assessed** (no critical gaps; auth well-designed for self-hosted; cookie flags and session timeout deferred as minor hardening)
 8. **19.1** Migration 171 data cleanup — **Assessed / No Action** (PreferredWordScore renamed to CustomFormatScore in Migration 197, actively used in UI)
 
 ### Lane B — Correctness
