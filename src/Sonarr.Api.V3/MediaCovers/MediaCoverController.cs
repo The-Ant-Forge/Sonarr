@@ -32,8 +32,7 @@ namespace Sonarr.Api.V3.MediaCovers
 
             if (!_diskProvider.FileExists(filePath) || _diskProvider.GetFileSize(filePath) == 0)
             {
-                // Return the full sized image if someone requests a non-existing resized one.
-                // TODO: This code can be removed later once everyone had the update for a while.
+                // Fallback: serve full-size image when a resized variant doesn't exist yet
                 var basefilePath = RegexResizedImage.Replace(filePath, ".jpg");
                 if (basefilePath == filePath || !_diskProvider.FileExists(basefilePath))
                 {

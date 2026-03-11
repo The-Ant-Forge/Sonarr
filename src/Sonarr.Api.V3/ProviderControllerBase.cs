@@ -97,7 +97,7 @@ namespace Sonarr.Api.V3
         [Produces("application/json")]
         public ActionResult<TProviderResource> UpdateProvider([FromRoute] int id, [FromBody] TProviderResource providerResource, [FromQuery] bool forceSave = false)
         {
-            // TODO: Remove fallback to Id from body in next API version bump
+            // V3 backwards compat: fall back to body ID if route ID not found (removed in V5)
             var existingDefinition = _providerFactory.Find(id) ?? _providerFactory.Find(providerResource.Id);
 
             if (existingDefinition == null)

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace NzbDrone.Core.Notifications.Webhook
 {
-    // TODO: In v4 this will likely be changed to the default camel case.
+    // PascalCase enum serialization kept for backwards compatibility with existing webhook consumers
     [JsonConverter(typeof(StringEnumConverter), converterParameters: typeof(DefaultNamingStrategy))]
     public enum WebhookEventType
     {

@@ -59,7 +59,7 @@ interface AutoSuggestInputProps<T> extends Omit<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AutoSuggestInput<T = any>(props: AutoSuggestInputProps<T>) {
   const {
-    // TODO: forwaredRef should be replaces with React.forwardRef
+    // TODO: forwardedRef prop should be replaced with React.forwardRef
     forwardedRef,
     className = styles.input,
     inputContainerClassName = styles.inputContainer,

@@ -46,7 +46,7 @@ namespace NzbDrone.Core.ImportLists.Sonarr
         [FieldDefinition(5, Type = FieldType.Select, SelectOptionsProviderAction = "getRootFolders", Label = "RootFolders", HelpText = "ImportListsSonarrSettingsRootFoldersHelpText")]
         public IEnumerable<string> RootFolderPaths { get; set; }
 
-        // TODO: Remove this eventually, no translation added as deprecated
+        // Deprecated: only used by older Sonarr instances that still have language profiles
         [FieldDefinition(6, Type = FieldType.Select, SelectOptionsProviderAction = "getLanguageProfiles", Label = "Language Profiles", HelpText = "Language Profiles from the source instance to import from")]
         public IEnumerable<int> LanguageProfileIds { get; set; }
 

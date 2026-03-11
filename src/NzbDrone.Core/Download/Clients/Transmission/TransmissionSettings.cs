@@ -37,9 +37,8 @@ namespace NzbDrone.Core.Download.Clients.Transmission
             TvCategory = "tv-sonarr";
         }
 
-        // TODO: Remove this in v5
-        // This constructor is used when deserializing from JSON, it will set the
-        // category to the deserialized value, defaulting to null.
+        // JsonConstructor: deserializing from JSON defaults TvCategory to null (not "tv-sonarr")
+        // so existing users without a category set don't get one forced on them.
         [JsonConstructor]
         public TransmissionSettings(string tvCategory = null)
         {
