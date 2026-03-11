@@ -175,8 +175,8 @@ export default function createAjaxRequest<T = any>(
 
         try {
           errorXhr.responseJSON = await response.json();
-        } catch {
-          // response wasn't JSON
+        } catch (parseError) {
+          console.debug('[ajax] Response body was not valid JSON', parseError);
         }
 
         throw errorXhr;

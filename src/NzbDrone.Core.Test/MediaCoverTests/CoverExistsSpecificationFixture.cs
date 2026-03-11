@@ -57,7 +57,7 @@ namespace NzbDrone.Core.Test.MediaCoverTests
         }
 
         [Test]
-        public void should_return_true_if_there_is_no_size_header_and_file_exist()
+        public void should_return_false_if_there_is_no_size_header_and_file_exists()
         {
             GivenExistingFileSize(100);
             Subject.AlreadyExists("http://url", "c:\\file.exe").Should().BeFalse();

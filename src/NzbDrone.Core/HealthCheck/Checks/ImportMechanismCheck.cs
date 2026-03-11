@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Configuration.Events;
 using NzbDrone.Core.Download;
@@ -18,12 +19,14 @@ namespace NzbDrone.Core.HealthCheck.Checks
     {
         private readonly IConfigService _configService;
         private readonly IProvideDownloadClient _provideDownloadClient;
+        private readonly Logger _logger;
 
-        public ImportMechanismCheck(IConfigService configService, IProvideDownloadClient provideDownloadClient, ILocalizationService localizationService)
+        public ImportMechanismCheck(IConfigService configService, IProvideDownloadClient provideDownloadClient, ILocalizationService localizationService, Logger logger)
             : base(localizationService)
         {
             _configService = configService;
             _provideDownloadClient = provideDownloadClient;
+            _logger = logger;
         }
 
         public override HealthCheck Check()
@@ -38,9 +41,10 @@ namespace NzbDrone.Core.HealthCheck.Checks
                     Status = v.GetStatus()
                 }).ToList();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // One or more download clients failed, assume the health is okay and verify later
+                _logger.Warn(ex, "Unable to communicate with one or more download clients for health check");
                 return new HealthCheck(GetType());
             }
 

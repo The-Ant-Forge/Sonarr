@@ -264,7 +264,7 @@ namespace Sonarr.Api.V3.Series
             {
                 foreach (var season in resource.Seasons)
                 {
-                    season.Statistics = seriesStatistics.SeasonStatistics.SingleOrDefault(s => s.SeasonNumber == season.SeasonNumber).ToResource();
+                    season.Statistics = seriesStatistics.SeasonStatistics.SingleOrDefault(s => s.SeasonNumber == season.SeasonNumber)?.ToResource();
                 }
             }
         }
