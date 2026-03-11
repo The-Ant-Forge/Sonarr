@@ -16,7 +16,7 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 |---|---|---|---|---|---|---|
 | 6.1 | Security | `FileSystemController` accepts arbitrary paths | ~~Add path validation~~ DONE — defense-in-depth validation added; full sandboxing not appropriate (admin endpoint) | H | L | L |
 | 6.2 | Security | Credential fields lack `Privacy` annotations | ~~Add `PrivacyLevel.ApiKey`~~ DONE — 5 provider settings annotated; HostConfigResource verified correct | H | L | L |
-| 6.3 | Security | X509 certificate validation — zero tests | Add unit tests for accept/reject scenarios | H | M | L |
+| 6.3 | Security | X509 certificate validation — zero tests | ~~Add unit tests~~ DONE — 17 tests covering all code paths (sender types, localhost bypass, validation modes, local/public IPs, error flags). Commit `256a385` | H | M | L |
 | 15.1 | Logging | SignalR logs full message bodies (data leak) | ~~Redact sensitive fields~~ DONE — removed body payload from debug log | H | L | L |
 | 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Review outbound URL paths for private-network access, redirect following, scheme restrictions | H | M | M |
 | 18.2 | Network Security | API-key scope & auth/authz gaps | Audit local-network trust, CSRF/CORS, websocket auth, stale auth state | H | M | M |
@@ -36,7 +36,7 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 20.2 | Concurrency | Unbounded parallelism in scans/imports | Assessed — indexer searches use unbounded Task.WhenAll (mitigated by per-indexer rate limits); FFProbe has no concurrency limiter. SemaphoreSlim around FFProbe would be highest-value fix. | M | M | M |
 | 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Assessed — HttpClient pooled per-proxy (good), FileStream disposal correct, HappyEyeballs cleanup excellent. Gap: no external CancellationToken on IHttpClient. Low real-world risk. | M | M | L |
 | 5.2 | Error Handling | Download clients catch broad `Exception` | Assessed — catches are in validation methods, broad catch is acceptable as last-resort fallback | M | M | L |
-| 8.3 | Test Gaps | Security-critical code untested (Auth, Validation, FileSystem) | Targeted first-pass tests for risky subsets | H | M | L |
+| 8.3 | Test Gaps | Security-critical code untested (Auth, Validation, FileSystem) | Partially DONE — X509CertificateValidationService now has 17 tests (commit `256a385`). Auth and FileSystem controller tests deferred. | H | M | L |
 | 17.1 | Stale Tests | 7 `[Ignore]` tests with stale reasons | ~~Triage~~ DONE — 2 removed, 1 re-enabled, 3 docs improved | M | L | L |
 | 16.2 | API Parity | `ProviderControllerBase` V5 fallback to body ID | ~~Remove~~ DONE — V5 now uses route ID only | M | L | M |
 | 11.2 | Robustness | `window.Sonarr` null guard missing | ~~Add guard~~ DONE — error page shown if initialization fails | M | L | L |
@@ -527,7 +527,7 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 2. ~~**6.2** Privacy annotations on all credential fields~~ — **DONE** (commit `3728ba5`)
 3. ~~**15.1** SignalR log redaction~~ — **DONE** (commit `3c046bf`)
 4. **18.3** Secret handling audit — verify redaction across API resources, logs, exceptions
-5. **6.3** X509 certificate validation tests
+5. ~~**6.3** X509 certificate validation tests~~ — **DONE** (commit `256a385`)
 6. **18.1** SSRF review — outbound URL validation for indexers, webhooks, download clients
 7. **18.2** Auth/authz audit — API-key scope, CSRF/CORS, websocket auth
 8. **19.1** Migration 171 data cleanup — resolve "Kill references to Preferred"
@@ -539,7 +539,7 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 2. ~~**5.1** Fix 4 swallowed exceptions~~ — **DONE** (commit `6d39259`)
 3. ~~**8.1** Fix assertion bug in CoverExistsSpecificationFixture~~ — **DONE** (commit `6d39259`, name was wrong not assertion)
 4. ~~**5.3** DelayProfileService throw instead of silent return~~ — **DONE** (commit `6d39259`)
-5. **8.3** Targeted tests for security-critical code (Auth, Validation, FileSystem)
+5. **8.3** / **6.3** Targeted tests for security-critical code — **Partially DONE** (X509 tests: commit `256a385`; Auth/FileSystem deferred)
 6. ~~**17.1** Stale [Ignore] test triage~~ — **DONE** (commit `9bb49ca`)
 7. ~~**16.2** ProviderControllerBase V5 fallback review~~ — **DONE** (commit `a228364`)
 8. ~~**11.2** window.Sonarr initialization guard~~ — **DONE** (commit `9bb49ca`)
