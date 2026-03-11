@@ -55,20 +55,36 @@ dotnet run --project src/NzbDrone.Console/Sonarr.Console.csproj
 
 ## Local Testing Deployment
 
-**Installation directory:** `D:\Apps\Sonarr` — a configured Sonarr instance with database, config, and indexers already set up.
+**Installation directory:** `D:\Apps\Sonarr` — matches the official Inno Setup installer layout (`{commonappdata}\Sonarr\bin`).
 
-| Path | Description |
+| Path | Contents |
 |---|---|
-| `D:\Apps\Sonarr/` | Live installation (preserve `config.xml`, `sonarr.db`, `logs.db`, `Backups/`, `logs/`) |
-| `_output/net10.0-windows/` | Backend DLLs + tray app (use this for Windows deploy, not `net10.0/`) |
-| `_output/UI/` | Frontend assets (copy to install dir as `UI/`) |
+| `D:\Apps\Sonarr/` | Data directory: `config.xml`, `sonarr.db`, `logs.db`, `Backups/`, `logs/` |
+| `D:\Apps\Sonarr/bin/` | Application binaries, UI assets, localization (everything from build output) |
+| `_output/net10.0-windows/` | Build output: backend DLLs + tray app (use this for Windows, not `net10.0/`) |
+| `_output/UI/` | Build output: frontend assets |
 | `_tests/net10.0/` | Test assemblies |
 
-**Deploy & run:**
+### Deploying
+
+Both modes use `deploy.sh` which copies `_output/net10.0-windows/*` → `bin/` and `_output/UI/*` → `bin/UI/`.
+
 ```bash
-bash deploy.sh --clean                                     # deploy build output
-"D:\Apps\Sonarr\Sonarr.exe" -data="D:\Apps\Sonarr"        # tray mode (port 9103)
-"D:\Apps\Sonarr\Sonarr.Console.exe" -data="D:\Apps\Sonarr" # console mode (port 9103)
+# Standard deploy — wipes bin/, copies fresh build. Preserves config, database, logs, backups.
+bash deploy.sh
+
+# Clean deploy — wipes ENTIRE install directory (config, db, logs — everything gone).
+# Back up first if needed. Use for a completely fresh start.
+bash deploy.sh --clean
+```
+
+Standard deploy is the normal workflow — it also cleans up stale flat-layout files from previous installs. Use `--clean` only when you want a factory-reset install.
+
+### Running
+
+```bash
+"D:\Apps\Sonarr\bin\Sonarr.exe" -data="D:\Apps\Sonarr"        # tray mode (port 9103)
+"D:\Apps\Sonarr\bin\Sonarr.Console.exe" -data="D:\Apps\Sonarr" # console mode (port 9103)
 ```
 Web UI: http://localhost:9103 | API key: see `D:\Apps\Sonarr\config.xml`
 

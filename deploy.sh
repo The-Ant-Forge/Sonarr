@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # Deploy Sonarr dev build to local installation
 # Usage: bash deploy.sh [--clean]
-#   --clean: Remove bin/ directory before copying (recommended for major upgrades)
+#
+# Standard deploy: wipes bin/ and copies fresh build output.
+#   Preserves data files (config.xml, sonarr.db, logs.db, Backups/, logs/).
+#
+# Clean deploy (--clean): wipes the ENTIRE install directory for a fresh start.
+#   You will lose config, database, and logs. Back up first if needed.
 #
 # Directory layout matches the official Inno Setup installer:
 #   D:/Apps/Sonarr/           ← data directory (config, db, logs, backups)
@@ -15,7 +20,12 @@ BUILD_DIR="d:/Dev/Sonarr/_output"
 BACKEND_DIR="$BUILD_DIR/net10.0-windows"
 UI_DIR="$BUILD_DIR/UI"
 
-echo "=== Sonarr Deploy ==="
+MODE="standard"
+if [[ "${1:-}" == "--clean" ]]; then
+  MODE="clean"
+fi
+
+echo "=== Sonarr Deploy ($MODE) ==="
 echo "Source:  $BUILD_DIR"
 echo "Target:  $BIN_DIR"
 
@@ -38,12 +48,19 @@ if tasklist.exe 2>/dev/null | grep -qi "Sonarr"; then
   exit 1
 fi
 
-# Clean mode: remove bin/ directory entirely (data files are outside bin/)
-if [[ "${1:-}" == "--clean" ]]; then
+if [[ "$MODE" == "clean" ]]; then
+  # Clean mode: wipe entire install directory (config, db, logs — everything)
   echo ""
-  echo "Cleaning bin directory..."
+  echo "CLEAN DEPLOY: Removing entire install directory..."
+  if [[ -d "$INSTALL_DIR" ]]; then
+    rm -rf "$INSTALL_DIR"
+    echo "  Removed: $INSTALL_DIR"
+  fi
+else
+  # Standard mode: wipe bin/ only, preserve data files
+  echo ""
   if [[ -d "$BIN_DIR" ]]; then
-    echo "  Removing: bin/"
+    echo "Removing bin/..."
     rm -rf "$BIN_DIR"
   fi
 
@@ -87,6 +104,6 @@ mkdir -p "$BIN_DIR/UI"
 cp -r "$UI_DIR"/* "$BIN_DIR/UI/"
 
 echo ""
-echo "=== Deploy complete ==="
+echo "=== Deploy complete ($MODE) ==="
 echo "Start with: \"$BIN_DIR/Sonarr.exe\" -data=\"D:\\Apps\\Sonarr\""
 echo "Web UI:     http://localhost:9103"
