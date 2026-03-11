@@ -35,15 +35,15 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 20.1 | Concurrency | Command handler duplicate execution | Review for race conditions, missing cancellation tokens | M | M | M |
 | 20.2 | Concurrency | Unbounded parallelism in scans/imports | Add bounded concurrency for I/O-heavy operations | M | M | M |
 | 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Check disposal, timeouts, retry policies, rate limiting | M | M | L |
-| 5.2 | Error Handling | Download clients catch broad `Exception` | Narrow to specific exception types | M | M | L |
+| 5.2 | Error Handling | Download clients catch broad `Exception` | Assessed — catches are in validation methods, broad catch is acceptable as last-resort fallback | M | M | L |
 | 8.3 | Test Gaps | Security-critical code untested (Auth, Validation, FileSystem) | Targeted first-pass tests for risky subsets | H | M | L |
 | 17.1 | Stale Tests | 7 `[Ignore]` tests with stale reasons | ~~Triage~~ DONE — 2 removed, 1 re-enabled, 3 docs improved | M | L | L |
 | 16.2 | API Parity | `ProviderControllerBase` V5 fallback to body ID | ~~Remove~~ DONE — V5 now uses route ID only | M | L | M |
 | 11.2 | Robustness | `window.Sonarr` null guard missing | ~~Add guard~~ DONE — error page shown if initialization fails | M | L | L |
-| 7.2 | Type Safety | `window.Sonarr` untyped in 40+ locations | Create typed accessor with null guard | M | M | L |
+| 7.2 | Type Safety | `window.Sonarr` untyped in 40+ locations | Deferred — init guard (11.2) mitigates crash risk; typed accessor is large refactor for 30+ files | M | M | L |
 | 7.3 | Type Safety | Unsafe type assertions (`as unknown as`, `{} as T`) | Fix underlying types | M | M | M |
 | 5.4 | Error Handling | Frontend stores raw XHR in error state | Normalize error structure | M | M | M |
-| 10.1 | Performance | `VideoFileInfoReader` re-reads media info | Implement path/mtime cache | M | M | L |
+| 10.1 | Performance | `VideoFileInfoReader` re-reads media info | ~~Implement cache~~ DONE — 30min rolling cache keyed on path/mtime/size | M | M | L |
 
 ### Lane C — Maintainability (opportunistic)
 
@@ -276,11 +276,10 @@ Already addressed comprehensively in the dependency audit (`docs/Spec-Dependency
 
 ### 10. Performance
 
-**10.1 VideoFileInfoReader media info re-reads**
-- `VideoFileInfoReader.cs:53` — existing TODO: "Cache media info by path, mtime to avoid multiple reads"
-- Media info extraction is I/O heavy; repeated reads during import/scan waste time
-
-**Action**: Implement LRU cache keyed on (path, lastWriteTime). Invalidate on file change.
+**10.1 VideoFileInfoReader media info re-reads** — DONE
+- `VideoFileInfoReader.cs:53` — was re-reading ffprobe results on every call
+- **Applied**: Added 30-minute rolling cache via `ICacheManager`, keyed on `path:mtime:fileSize`. Commit `a9d43c5`.
+- Cache auto-invalidates when file changes (mtime/size in key).
 
 **10.2 Lodash for trivial operations**
 - 27 JS files import Lodash for operations like `_.omit()`, `_.isArray()`, `_.isEqual()`, `_.pick()`
@@ -529,10 +528,10 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 6. ~~**17.1** Stale [Ignore] test triage~~ — **DONE** (commit `9bb49ca`)
 7. ~~**16.2** ProviderControllerBase V5 fallback review~~ — **DONE** (commit `a228364`)
 8. ~~**11.2** window.Sonarr initialization guard~~ — **DONE** (commit `9bb49ca`)
-9. **7.2** Typed window.Sonarr accessor
-10. **5.2** Narrow exception types in download clients
+9. **7.2** Typed window.Sonarr accessor — **Deferred** (init guard mitigates crash risk; 30+ file refactor)
+10. **5.2** Narrow exception types in download clients — **Assessed** (catches are in validation methods, broad catch acceptable)
 11. **20.1–20.3** Concurrency/resource lifecycle review (investigate, fix critical issues)
-12. **10.1** VideoFileInfoReader cache
+12. ~~**10.1** VideoFileInfoReader cache~~ — **DONE** (commit `a9d43c5`)
 13. **5.4** Frontend error normalization
 14. **7.3** Fix unsafe type assertions
 
