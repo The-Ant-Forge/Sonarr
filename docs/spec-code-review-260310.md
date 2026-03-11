@@ -49,11 +49,11 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 
 | # | Category | Finding | Action | Impact | Effort | Risk |
 |---|---|---|---|---|---|---|
-| 1.1 | Dead Code | `[Obsolete]` properties in Queue.cs, MonitoringOptions.cs | Remove if no migration dependency | M | L | L |
-| 1.2 | Dead Code | `polyfills.js` "Remove in v5" — we're on v5 | Remove obsolete polyfills | M | L | L |
-| 1.3 | Dead Code | Empty `Helpers/Props/Shapes/` directory | Delete empty directory | L | L | L |
-| 1.4 | Dead Code | `selectSettings.ts` legacy field aliases | Remove after confirming no consumers | M | L | L |
-| 15.2 | Logging | `index.ts` monkey-patches console.error | Replace with proper error boundary | M | M | L |
+| 1.1 | Dead Code | `[Obsolete]` LatestSeason in MonitoringOptions.cs | ~~Remove~~ DONE — can't remove (DB ordinals), improved [Obsolete] message. Queue.Episode stays (V3 API uses it). | M | L | L |
+| 1.2 | Dead Code | `polyfills.js` "Remove in v5" — we're on v5 | ~~Remove polyfills~~ DONE — removed startsWith, endsWith, contains. Kept Object.groupBy (Firefox ESR). | M | L | L |
+| 1.3 | Dead Code | Empty `Helpers/Props/Shapes/` directory | ~~Delete~~ DONE — directory removed (git doesn't track empty dirs) | L | L | L |
+| 1.4 | Dead Code | `selectSettings.ts` legacy field aliases | ~~Remove~~ DONE — removed `link` and `detailedMessage`. Kept `message` (still used in 3 components). | M | L | L |
+| 15.2 | Logging | `index.ts` monkey-patches console.error | ~~Refactor~~ DONE — extracted SUPPRESSED_WARNINGS array, added docs linking to react-custom-scrollbars replacement | M | M | L |
 | 15.3 | Logging | Backend health checks log inconsistently | Standardize exception logging in HealthCheckBase | M | M | L |
 | 3.1 | Duplication | Filter/sort logic duplicated TS ↔ JS | Consolidate into single TS module | M | M | L |
 | 14.1 | Abandoned Deps | `react-custom-scrollbars` (abandoned) | Replace with CSS or maintained lib | M | M | L |
@@ -538,8 +538,8 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 ### Lane C — Maintainability (opportunistic)
 *Do when touching related files or between other work.*
 
-- **1.1–1.4** Dead code removal
-- **15.2** Replace console monkey-patch
+- ~~**1.1–1.4** Dead code removal~~ — **DONE** (commit `164d362`)
+- ~~**15.2** Replace console monkey-patch~~ — **DONE** (commit `a2eee36`)
 - **15.3** Standardize backend logging
 - **3.1** Consolidate filter/sort duplication
 - **14.1** Replace react-custom-scrollbars
