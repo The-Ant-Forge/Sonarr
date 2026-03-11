@@ -54,12 +54,12 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 1.3 | Dead Code | Empty `Helpers/Props/Shapes/` directory | ~~Delete~~ DONE — directory removed (git doesn't track empty dirs) | L | L | L |
 | 1.4 | Dead Code | `selectSettings.ts` legacy field aliases | ~~Remove~~ DONE — removed `link` and `detailedMessage`. Kept `message` (still used in 3 components). | M | L | L |
 | 15.2 | Logging | `index.ts` monkey-patches console.error | ~~Refactor~~ DONE — extracted SUPPRESSED_WARNINGS array, added docs linking to react-custom-scrollbars replacement | M | M | L |
-| 15.3 | Logging | Backend health checks log inconsistently | Standardize exception logging in HealthCheckBase | M | M | L |
-| 3.1 | Duplication | Filter/sort logic duplicated TS ↔ JS | Consolidate into single TS module | M | M | L |
-| 14.1 | Abandoned Deps | `react-custom-scrollbars` (abandoned) | Replace with CSS or maintained lib | M | M | L |
-| 4.2 | Naming | `ConfigService` property naming TODOs | Rename with API versioning consideration | M | M | M |
-| 9.1 | Doc Drift | 30+ stale TODO/FIXME markers | Resolve those tied to active defects; leave rest | M | M | L |
-| 7.1 | Type Safety | `@ts-expect-error` in request/response/settings boundaries | Fix suppressions at API boundaries only | M | M | L |
+| 15.3 | Logging | Backend health checks log inconsistently | Assessed — all catch blocks already log full exception objects at appropriate levels. No action needed. | M | M | L |
+| 3.1 | Duplication | Filter/sort logic duplicated TS ↔ JS | Assessed — `clientSideFilterAndSort.ts` (Zustand) and `createClientSideCollectionSelector.js` (Redux) can't merge until Redux→Zustand migration | M | M | L |
+| 14.1 | Abandoned Deps | `react-custom-scrollbars` (abandoned) | ~~Replace~~ DONE — replaced OverlayScroller with CSS Scroller in PageSidebar, deleted component and dependency. Commit `8316212` | M | M | L |
+| 4.2 | Naming | `ConfigService` property naming TODOs | Assessed — `SkipFreeSpaceCheckWhenImporting` rename deferred (DB key stored as string, needs migration across 8+ files). Documented intent in code. | M | M | M |
+| 9.1 | Doc Drift | 30+ stale TODO/FIXME markers | ~~Resolve~~ DONE — resolved 6 stale TODOs (TransmissionSettings, WebhookEventType, V3 ProviderController, SonarrSettings, MediaCoverController, AutoSuggestInput). ~50 remain as legitimate future-work notes. Commit `7807b26` | M | M | L |
+| 7.1 | Type Safety | `@ts-expect-error` in request/response/settings boundaries | Assessed — all 44 instances are blocked on untyped Redux actions or JS theme files. `@ts-expect-error` is correct approach (auto-flags when types are fixed). Deferred to TS/Redux migration. | M | M | L |
 
 ### Deferred
 
@@ -540,12 +540,12 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 
 - ~~**1.1–1.4** Dead code removal~~ — **DONE** (commit `164d362`)
 - ~~**15.2** Replace console monkey-patch~~ — **DONE** (commit `a2eee36`)
-- **15.3** Standardize backend logging
-- **3.1** Consolidate filter/sort duplication
-- **14.1** Replace react-custom-scrollbars
-- **4.2** ConfigService property renames
-- **9.1** Resolve TODO markers tied to active defects
-- **7.1** Fix @ts-expect-error at API boundaries only
+- **15.3** Standardize backend logging — **Assessed** (already consistent, no action needed)
+- **3.1** Consolidate filter/sort duplication — **Assessed** (blocked on Redux→Zustand migration)
+- ~~**14.1** Replace react-custom-scrollbars~~ — **DONE** (commit `8316212`)
+- **4.2** ConfigService property renames — **Assessed** (deferred, DB key migration needed)
+- ~~**9.1** Resolve TODO markers tied to active defects~~ — **DONE** (commit `7807b26`)
+- **7.1** Fix @ts-expect-error at API boundaries only — **Assessed** (blocked on TS/Redux migration)
 
 ## Codex Review Feedback (incorporated)
 

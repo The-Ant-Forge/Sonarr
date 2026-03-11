@@ -197,7 +197,9 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("DownloadClientHistoryLimit", value); }
         }
 
-        // TODO: Rename to 'Skip Free Space Check'
+        // Name says "WhenImporting" but it skips all free space checks (import + download).
+        // Renaming deferred: DB key "SkipFreeSpaceCheckWhenImporting" stored in config table,
+        // would need migration or alias for backwards compat across 8+ files.
         public bool SkipFreeSpaceCheckWhenImporting
         {
             get { return GetValueBoolean("SkipFreeSpaceCheckWhenImporting", false); }
