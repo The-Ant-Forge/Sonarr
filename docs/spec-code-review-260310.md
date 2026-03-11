@@ -37,9 +37,9 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Check disposal, timeouts, retry policies, rate limiting | M | M | L |
 | 5.2 | Error Handling | Download clients catch broad `Exception` | Narrow to specific exception types | M | M | L |
 | 8.3 | Test Gaps | Security-critical code untested (Auth, Validation, FileSystem) | Targeted first-pass tests for risky subsets | H | M | L |
-| 17.1 | Stale Tests | 7 `[Ignore]` tests with stale reasons | Triage: fix, remove, or document | M | L | L |
-| 16.2 | API Parity | `ProviderControllerBase` V5 fallback to body ID | Review/remove — API contract debt | M | L | M |
-| 11.2 | Robustness | `window.Sonarr` null guard missing | Add initialization guard | M | L | L |
+| 17.1 | Stale Tests | 7 `[Ignore]` tests with stale reasons | ~~Triage~~ DONE — 2 removed, 1 re-enabled, 3 docs improved | M | L | L |
+| 16.2 | API Parity | `ProviderControllerBase` V5 fallback to body ID | ~~Remove~~ DONE — V5 now uses route ID only | M | L | M |
+| 11.2 | Robustness | `window.Sonarr` null guard missing | ~~Add guard~~ DONE — error page shown if initialization fails | M | L | L |
 | 7.2 | Type Safety | `window.Sonarr` untyped in 40+ locations | Create typed accessor with null guard | M | M | L |
 | 7.3 | Type Safety | Unsafe type assertions (`as unknown as`, `{} as T`) | Fix underlying types | M | M | M |
 | 5.4 | Error Handling | Frontend stores raw XHR in error state | Normalize error structure | M | M | M |
@@ -526,9 +526,9 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 3. ~~**8.1** Fix assertion bug in CoverExistsSpecificationFixture~~ — **DONE** (commit `6d39259`, name was wrong not assertion)
 4. ~~**5.3** DelayProfileService throw instead of silent return~~ — **DONE** (commit `6d39259`)
 5. **8.3** Targeted tests for security-critical code (Auth, Validation, FileSystem)
-6. **17.1** Stale [Ignore] test triage
-7. **16.2** ProviderControllerBase V5 fallback review
-8. **11.2** window.Sonarr initialization guard
+6. ~~**17.1** Stale [Ignore] test triage~~ — **DONE** (commit `9bb49ca`)
+7. ~~**16.2** ProviderControllerBase V5 fallback review~~ — **DONE** (commit `a228364`)
+8. ~~**11.2** window.Sonarr initialization guard~~ — **DONE** (commit `9bb49ca`)
 9. **7.2** Typed window.Sonarr accessor
 10. **5.2** Narrow exception types in download clients
 11. **20.1–20.3** Concurrency/resource lifecycle review (investigate, fix critical issues)
