@@ -35,9 +35,11 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 - [ ] **Lodash removal** (14.2) — replace when editing those files
 - [ ] **jQuery removal** (14.3) — replace with fetch when touching
 - [x] **Drop legacy browser shims & polyfills** — Removed `polyfills.js` (console shims + Object.groupBy), `core-js`, `@juggle/resize-observer`, `Shims` resolve path. Tightened browserslist to drop Firefox ESR 115 and Opera Mini. Disabled Babel `useBuiltIns`.
+- [x] **Dependency removal sprint** — Removed 8 more packages (`copy-to-clipboard`, `react-text-truncate`, `react-lazyload`, `jdu`, `qs`, `stacktrace-js`, `use-debounce`, `react-measure`) + 3 `@types` packages. All replaced with native browser APIs or custom hooks.
 
 ## Other Planned Work
 
 - [x] Code review spec (see `docs/spec-code-review-260310.md`)
-- [ ] Code review implementation (Lanes A → B → C per spec)
+- [x] Code review implementation (Lanes A → B → C per spec) — All 3 lanes complete (8+14+11 = 33 items)
 - [ ] Unmonitor feature refinements (if needed after testing)
+- [ ] Deploy script testing with `bin/` directory layout

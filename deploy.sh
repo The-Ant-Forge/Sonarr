@@ -1,27 +1,23 @@
 #!/usr/bin/env bash
 # Deploy Sonarr dev build to local installation
 # Usage: bash deploy.sh [--clean]
-#   --clean: Remove old binaries before copying (recommended for major upgrades)
+#   --clean: Remove bin/ directory before copying (recommended for major upgrades)
+#
+# Directory layout matches the official Inno Setup installer:
+#   D:/Apps/Sonarr/           ← data directory (config, db, logs, backups)
+#   D:/Apps/Sonarr/bin/       ← application binaries, UI, localization
 
 set -euo pipefail
 
 INSTALL_DIR="D:/Apps/Sonarr"
+BIN_DIR="$INSTALL_DIR/bin"
 BUILD_DIR="d:/Dev/Sonarr/_output"
 BACKEND_DIR="$BUILD_DIR/net10.0-windows"
 UI_DIR="$BUILD_DIR/UI"
 
-# Preserved paths (never deleted)
-PRESERVE=(
-  "config.xml"
-  "sonarr.db"
-  "logs.db"
-  "Backups"
-  "logs"
-)
-
 echo "=== Sonarr Deploy ==="
 echo "Source:  $BUILD_DIR"
-echo "Target:  $INSTALL_DIR"
+echo "Target:  $BIN_DIR"
 
 # Verify build output exists
 if [[ ! -f "$BACKEND_DIR/Sonarr.exe" ]]; then
@@ -42,39 +38,55 @@ if tasklist.exe 2>/dev/null | grep -qi "Sonarr"; then
   exit 1
 fi
 
-# Clean mode: remove everything except preserved paths
+# Clean mode: remove bin/ directory entirely (data files are outside bin/)
 if [[ "${1:-}" == "--clean" ]]; then
   echo ""
-  echo "Cleaning install directory (preserving config/db/backups/logs)..."
-  for item in "$INSTALL_DIR"/*; do
-    basename=$(basename "$item")
-    skip=false
-    for p in "${PRESERVE[@]}"; do
-      if [[ "$basename" == "$p" ]]; then
-        skip=true
-        break
+  echo "Cleaning bin directory..."
+  if [[ -d "$BIN_DIR" ]]; then
+    echo "  Removing: bin/"
+    rm -rf "$BIN_DIR"
+  fi
+
+  # Also clean up any stale flat-layout files from previous deploys
+  # (DLLs/EXEs that were copied to root instead of bin/)
+  stale_count=0
+  for item in "$INSTALL_DIR"/*.dll "$INSTALL_DIR"/*.exe "$INSTALL_DIR"/*.pdb "$INSTALL_DIR"/*.xml "$INSTALL_DIR"/*.json; do
+    if [[ -f "$item" ]]; then
+      basename=$(basename "$item")
+      # Preserve data files
+      if [[ "$basename" == "config.xml" ]]; then
+        continue
       fi
-    done
-    if [[ "$skip" == false ]]; then
-      echo "  Removing: $basename"
-      rm -rf "$item"
-    else
-      echo "  Keeping:  $basename"
+      echo "  Removing stale: $basename"
+      rm -f "$item"
+      stale_count=$((stale_count + 1))
     fi
   done
+  # Clean stale directories that belong in bin/
+  for dir in "$INSTALL_DIR/UI" "$INSTALL_DIR/Localization" "$INSTALL_DIR/asp"; do
+    if [[ -d "$dir" ]]; then
+      echo "  Removing stale: $(basename "$dir")/"
+      rm -rf "$dir"
+      stale_count=$((stale_count + 1))
+    fi
+  done
+  if [[ $stale_count -gt 0 ]]; then
+    echo "  Cleaned $stale_count stale flat-layout items from root"
+  fi
 fi
 
-# Copy backend DLLs (net10.0-windows includes tray app + all dependencies)
+# Copy backend DLLs into bin/ (matches official installer layout)
 echo ""
-echo "Copying backend ($(ls "$BACKEND_DIR" | wc -l) files)..."
-cp -r "$BACKEND_DIR"/* "$INSTALL_DIR/"
+mkdir -p "$BIN_DIR"
+echo "Copying backend ($(ls "$BACKEND_DIR" | wc -l) files) to bin/..."
+cp -r "$BACKEND_DIR"/* "$BIN_DIR/"
 
-# Copy frontend UI
-echo "Copying frontend UI..."
-mkdir -p "$INSTALL_DIR/UI"
-cp -r "$UI_DIR"/* "$INSTALL_DIR/UI/"
+# Copy frontend UI into bin/UI/
+echo "Copying frontend UI to bin/UI/..."
+mkdir -p "$BIN_DIR/UI"
+cp -r "$UI_DIR"/* "$BIN_DIR/UI/"
 
 echo ""
 echo "=== Deploy complete ==="
-echo "Start with: \"$INSTALL_DIR/Sonarr.exe\" -data=\"D:\\Apps\\Sonarr\""
+echo "Start with: \"$BIN_DIR/Sonarr.exe\" -data=\"D:\\Apps\\Sonarr\""
 echo "Web UI:     http://localhost:9103"
