@@ -371,12 +371,10 @@ High-priority TODOs requiring attention:
 
 ### 15. Logging & Observability
 
-**15.1 Sensitive data in frontend logs** (HIGH)
-- `SignalRListener.tsx:91-96` — `console.debug()` logs full SignalR message bodies
-- No redaction of API keys, tokens, or credentials in message payloads
-- `SignalRLogger.ts:42` has API key cleansing — but other console calls bypass it
-
-**Action**: Route all SignalR logging through `SignalRLogger`. Strip sensitive fields before logging.
+**15.1 Sensitive data in frontend logs** — DONE
+- `SignalRListener.tsx:91-96` — was logging full SignalR message bodies via `console.debug()`
+- **Applied**: Changed to log only message name, version, and action — no resource payload. Commit `3c046bf`.
+- `SignalRLogger.ts:42` already has API key cleansing for the SignalR transport layer.
 
 **15.2 Global console monkey-patching**
 - `index.ts:17-41` — overrides `console.error` to filter React deprecation warnings
@@ -511,9 +509,9 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 ### Lane A — Exploit / Data Loss Prevention
 *Do first. Each item is a focused commit.*
 
-1. **6.1** Path traversal fix in FileSystemController (add validation, canonicalization, symlink/UNC checks)
-2. **6.2** Privacy annotations on all credential fields
-3. **15.1** SignalR log redaction — route through SignalRLogger
+1. ~~**6.1** Path traversal fix in FileSystemController~~ — **DONE** (commit `3728ba5`)
+2. ~~**6.2** Privacy annotations on all credential fields~~ — **DONE** (commit `3728ba5`)
+3. ~~**15.1** SignalR log redaction~~ — **DONE** (commit `3c046bf`)
 4. **18.3** Secret handling audit — verify redaction across API resources, logs, exceptions
 5. **6.3** X509 certificate validation tests
 6. **18.1** SSRF review — outbound URL validation for indexers, webhooks, download clients
