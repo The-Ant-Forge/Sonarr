@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using FFMpegCore;
 using NLog;
+using NzbDrone.Common.Cache;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 
@@ -20,6 +21,7 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
     {
         private readonly IDiskProvider _diskProvider;
         private readonly Logger _logger;
+        private readonly ICached<MediaInfoModel> _cache;
 
         public const int MINIMUM_MEDIA_INFO_SCHEMA_REVISION = 14;
         public const int CURRENT_MEDIA_INFO_SCHEMA_REVISION = 14;
@@ -29,10 +31,11 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
         private static readonly string[] PqTransferFunctions = { "smpte2084" };
         private static readonly string[] ValidHdrTransferFunctions = HlgTransferFunctions.Concat(PqTransferFunctions).ToArray();
 
-        public VideoFileInfoReader(IDiskProvider diskProvider, Logger logger)
+        public VideoFileInfoReader(IDiskProvider diskProvider, ICacheManager cacheManager, Logger logger)
         {
             _diskProvider = diskProvider;
             _logger = logger;
+            _cache = cacheManager.GetRollingCache<MediaInfoModel>(GetType(), "mediaInfo", TimeSpan.FromMinutes(30));
 
             // We bundle ffprobe for all platforms
             GlobalFFOptions.Configure(options => options.BinaryFolder = AppDomain.CurrentDomain.BaseDirectory);
@@ -50,7 +53,16 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 return null;
             }
 
-            // TODO: Cache media info by path, mtime and length so we don't need to read files multiple times
+            var fileSize = _diskProvider.GetFileSize(filename);
+            var lastWriteTime = new FileInfo(filename).LastWriteTimeUtc;
+            var cacheKey = $"{filename}:{lastWriteTime.Ticks}:{fileSize}";
+
+            var cached = _cache.Find(cacheKey);
+
+            if (cached != null)
+            {
+                return cached;
+            }
 
             try
             {
@@ -160,6 +172,8 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
 
                 var sideData = streamSideData.Concat(framesSideData).ToList();
                 mediaInfoModel.VideoHdrFormat = GetHdrFormat(mediaInfoModel.VideoBitDepth, mediaInfoModel.VideoColourPrimaries, mediaInfoModel.VideoTransferCharacteristics, sideData);
+
+                _cache.Set(cacheKey, mediaInfoModel);
 
                 return mediaInfoModel;
             }
