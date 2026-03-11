@@ -16,7 +16,6 @@ import {
 import { IconName } from 'Components/Icon';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
-import OverlayScroller from 'Components/Scroller/OverlayScroller';
 import Scroller from 'Components/Scroller/Scroller';
 import usePrevious from 'Helpers/Hooks/usePrevious';
 import { icons } from 'Helpers/Props';
@@ -432,8 +431,6 @@ function PageSidebar() {
     };
   }, [isSmallScreen, sidebarTransform]);
 
-  const ScrollerComponent = isSmallScreen ? Scroller : OverlayScroller;
-
   return (
     <div
       ref={sidebarRef}
@@ -462,7 +459,7 @@ function PageSidebar() {
         </div>
       ) : null}
 
-      <ScrollerComponent
+      <Scroller
         className={styles.sidebar}
         scrollDirection="vertical"
         style={{
@@ -520,7 +517,7 @@ function PageSidebar() {
         </div>
 
         <Messages />
-      </ScrollerComponent>
+      </Scroller>
     </div>
   );
 }

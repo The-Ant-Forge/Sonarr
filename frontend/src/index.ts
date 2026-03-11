@@ -18,7 +18,8 @@ try {
   console.error('[init] Failed to initialize Sonarr', error);
 
   const container = document.createElement('div');
-  container.style.cssText = 'padding: 2rem; font-family: sans-serif; color: #c33;';
+  container.style.cssText =
+    'padding: 2rem; font-family: sans-serif; color: #c33;';
 
   const heading = document.createElement('h1');
   heading.textContent = 'Sonarr failed to initialize';
@@ -43,8 +44,8 @@ __webpack_public_path__ = `${window.Sonarr.urlBase}/`;
 /* eslint-enable no-undef, @typescript-eslint/ban-ts-comment */
 
 // Filter noisy React deprecation warnings from dependencies we can't control
-// (react-custom-scrollbars uses findDOMNode, several libs use defaultProps).
-// TODO: Remove once react-custom-scrollbars is replaced (see code review 14.1)
+// (PageSidebar uses findDOMNode, several libs use defaultProps).
+// TODO: Remove findDOMNode filter once PageSidebar migrates to useRef
 const SUPPRESSED_WARNINGS = [
   'Support for defaultProps will be removed from function components',
   'findDOMNode is deprecated and will be removed',
