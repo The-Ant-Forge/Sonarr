@@ -42,31 +42,28 @@ try {
 __webpack_public_path__ = `${window.Sonarr.urlBase}/`;
 /* eslint-enable no-undef, @typescript-eslint/ban-ts-comment */
 
-const error = console.error;
+// Filter noisy React deprecation warnings from dependencies we can't control
+// (react-custom-scrollbars uses findDOMNode, several libs use defaultProps).
+// TODO: Remove once react-custom-scrollbars is replaced (see code review 14.1)
+const SUPPRESSED_WARNINGS = [
+  'Support for defaultProps will be removed from function components',
+  'findDOMNode is deprecated and will be removed',
+];
 
-// Monkey patch console.error to filter out some warnings from React
-// TODO: Remove this after the great TypeScript migration
+const originalConsoleError = console.error;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function logError(...parameters: any[]) {
-  const filter = parameters.find((parameter) => {
-    return (
-      typeof parameter === 'string' &&
-      (parameter.includes(
-        'Support for defaultProps will be removed from function components in a future major release'
-      ) ||
-        parameter.includes(
-          'findDOMNode is deprecated and will be removed in the next major release'
-        ))
-    );
-  });
+console.error = (...args: any[]) => {
+  const isSuppressed = args.some(
+    (arg) =>
+      typeof arg === 'string' &&
+      SUPPRESSED_WARNINGS.some((warning) => arg.includes(warning))
+  );
 
-  if (!filter) {
-    error(...parameters);
+  if (!isSuppressed) {
+    originalConsoleError(...args);
   }
-}
-
-console.error = logError;
+};
 
 const { bootstrap } = await import('./bootstrap');
 
