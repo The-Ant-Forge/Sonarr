@@ -91,8 +91,7 @@ function SignalRListener() {
     console.debug(
       `[signalR] received ${message.name}${
         message.version ? ` v${message.version}` : ''
-      }`,
-      message.body
+      } action=${message.body?.action ?? 'unknown'}`
     );
 
     const { name, body, version = 0 } = message;

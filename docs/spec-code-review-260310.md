@@ -17,7 +17,7 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 6.1 | Security | `FileSystemController` accepts arbitrary paths | ~~Add path validation~~ DONE — defense-in-depth validation added; full sandboxing not appropriate (admin endpoint) | H | L | L |
 | 6.2 | Security | Credential fields lack `Privacy` annotations | ~~Add `PrivacyLevel.ApiKey`~~ DONE — 5 provider settings annotated; HostConfigResource verified correct | H | L | L |
 | 6.3 | Security | X509 certificate validation — zero tests | Add unit tests for accept/reject scenarios | H | M | L |
-| 15.1 | Logging | SignalR logs full message bodies (data leak) | Redact sensitive fields; route through SignalRLogger | H | L | L |
+| 15.1 | Logging | SignalR logs full message bodies (data leak) | ~~Redact sensitive fields~~ DONE — removed body payload from debug log | H | L | L |
 | 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Review outbound URL paths for private-network access, redirect following, scheme restrictions | H | M | M |
 | 18.2 | Network Security | API-key scope & auth/authz gaps | Audit local-network trust, CSRF/CORS, websocket auth, stale auth state | H | M | M |
 | 18.3 | Network Security | Secret handling across layers | Verify secrets protected in API resources, logs, exceptions, UI state, SignalR, persisted settings | H | M | L |
