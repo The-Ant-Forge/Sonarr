@@ -653,7 +653,6 @@ namespace NzbDrone.Core.Test.OrganizerTests.FileNameBuilderTests
                    .Should().Be("South.Park.S15E06.City.Sushi.H264.DTS.[EN+ES+IT]");
         }
 
-        [Ignore("not currently supported")]
         [Test]
         public void should_remove_duplicate_non_word_characters()
         {

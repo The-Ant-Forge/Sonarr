@@ -107,7 +107,7 @@ namespace NzbDrone.Core.Test.TvTests.EpisodeRepositoryTests
         }
 
         [Test]
-        [Ignore("Specials not implemented")]
+        [Ignore("Feature incomplete: includeSpecials parameter accepted but not used in EpisodesWithoutFilesBuilder query")]
         public void should_get_episode_including_specials()
         {
             var episodes = Subject.EpisodesWithoutFiles(_pagingSpec, true);

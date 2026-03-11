@@ -28,10 +28,10 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 
 | # | Category | Finding | Action | Impact | Effort | Risk |
 |---|---|---|---|---|---|---|
-| 11.1 | Robustness | `SingleOrDefault().ToResource()` NRE risk | Add null checks before `.ToResource()` | H | L | L |
-| 5.1 | Error Handling | 5 swallowed exceptions across backend | Log exception details or rethrow | H | L | L |
-| 8.1 | Test Gaps | Assertion bug in `CoverExistsSpecificationFixture` | Fix assertion to match test name | H | L | L |
-| 5.3 | Error Handling | `DelayProfileService.cs:114` silent return | Throw or log when item not found | M | L | L |
+| 11.1 | Robustness | `SingleOrDefault().ToResource()` NRE risk | ~~Add null checks~~ DONE — null-conditional operator added in V3 SeriesController | H | L | L |
+| 5.1 | Error Handling | 4 swallowed exceptions across backend | ~~Log exception details~~ DONE — added logging to ImportMechanismCheck, DbFactory, RTorrentProxy, createAjaxRequest | H | L | L |
+| 8.1 | Test Gaps | Test name/assertion mismatch in `CoverExistsSpecificationFixture` | ~~Fix mismatch~~ DONE — test name corrected (assertion was correct) | H | L | L |
+| 5.3 | Error Handling | `DelayProfileService.cs:114` silent return | ~~Throw when item not found~~ DONE — throws ModelNotFoundException | M | L | L |
 | 20.1 | Concurrency | Command handler duplicate execution | Review for race conditions, missing cancellation tokens | M | M | M |
 | 20.2 | Concurrency | Unbounded parallelism in scans/imports | Add bounded concurrency for I/O-heavy operations | M | M | M |
 | 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Check disposal, timeouts, retry policies, rate limiting | M | M | L |
@@ -521,10 +521,10 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 ### Lane B — Correctness
 *Do after Lane A critical items. Can interleave with Lane A medium-effort items.*
 
-1. **11.1** Null reference fixes (`SingleOrDefault().ToResource()`)
-2. **5.1** Fix 5 swallowed exceptions
-3. **8.1** Fix assertion bug in CoverExistsSpecificationFixture
-4. **5.3** DelayProfileService throw instead of silent return
+1. ~~**11.1** Null reference fixes (`SingleOrDefault().ToResource()`)~~ — **DONE** (commit `6d39259`)
+2. ~~**5.1** Fix 4 swallowed exceptions~~ — **DONE** (commit `6d39259`)
+3. ~~**8.1** Fix assertion bug in CoverExistsSpecificationFixture~~ — **DONE** (commit `6d39259`, name was wrong not assertion)
+4. ~~**5.3** DelayProfileService throw instead of silent return~~ — **DONE** (commit `6d39259`)
 5. **8.3** Targeted tests for security-critical code (Auth, Validation, FileSystem)
 6. **17.1** Stale [Ignore] test triage
 7. **16.2** ProviderControllerBase V5 fallback review

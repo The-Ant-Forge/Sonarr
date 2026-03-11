@@ -220,7 +220,7 @@ namespace NzbDrone.Core.Test.IndexerTests.TorrentRssIndexerTests
         }
 
         [Test]
-        [Ignore("Cannot reliably reject unparseable titles")]
+        [Ignore("Design limitation: detector cannot reliably reject feeds with titles Sonarr's parser can't handle (e.g. AwesomeHD format)")]
         public void should_reject_rss_settings_for_AwesomeHD()
         {
             _indexerSettings.AllowZeroSize = true;

@@ -5,9 +5,37 @@ import './index.css';
 const initializeUrl = `${
   window.Sonarr.urlBase
 }/initialize.json?t=${Date.now()}`;
-const response = await fetch(initializeUrl);
 
-window.Sonarr = await response.json();
+try {
+  const response = await fetch(initializeUrl);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  window.Sonarr = await response.json();
+} catch (error) {
+  console.error('[init] Failed to initialize Sonarr', error);
+
+  const container = document.createElement('div');
+  container.style.cssText = 'padding: 2rem; font-family: sans-serif; color: #c33;';
+
+  const heading = document.createElement('h1');
+  heading.textContent = 'Sonarr failed to initialize';
+
+  const message = document.createElement('p');
+  message.textContent =
+    'Could not load configuration from the server. Check that the Sonarr backend is running and accessible.';
+
+  const detail = document.createElement('p');
+  detail.style.cssText = 'color: #666; font-size: 0.9rem;';
+  detail.textContent = String(error);
+
+  container.append(heading, message, detail);
+  document.body.append(container);
+
+  throw error;
+}
 
 /* eslint-disable no-undef, @typescript-eslint/ban-ts-comment */
 // @ts-ignore 2304

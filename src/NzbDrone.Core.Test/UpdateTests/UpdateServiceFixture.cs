@@ -244,7 +244,7 @@ namespace NzbDrone.Core.Test.UpdateTests
             Mocker.GetMock<IProcessProvider>().Verify(v => v.Start(scriptPath, It.IsAny<string>(), null, null, null), Times.Never());
         }
 
-        [Ignore("TODO fix")]
+        [Ignore("Integration test: uses real HTTP and archive extraction, too slow and flaky for CI. Run manually before releases.")]
         [Test]
         [IntegrationTest]
         public void Should_download_and_extract_to_temp_folder()
