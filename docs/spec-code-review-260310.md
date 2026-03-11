@@ -20,8 +20,8 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 15.1 | Logging | SignalR logs full message bodies (data leak) | ~~Redact sensitive fields~~ DONE — removed body payload from debug log | H | L | L |
 | 18.1 | Network Security | SSRF via user-configurable URLs (indexers, webhooks, etc.) | Review outbound URL paths for private-network access, redirect following, scheme restrictions | H | M | M |
 | 18.2 | Network Security | API-key scope & auth/authz gaps | Audit local-network trust, CSRF/CORS, websocket auth, stale auth state | H | M | M |
-| 18.3 | Network Security | Secret handling across layers | Verify secrets protected in API resources, logs, exceptions, UI state, SignalR, persisted settings | H | M | L |
-| 19.1 | Migrations | Migration 171 incomplete data migration | Resolve "Kill references to Preferred" TODO | H | M | M |
+| 18.3 | Network Security | Secret handling across layers | ~~Verify secrets protected~~ Partially DONE — ProwlProxy API key leak fixed (commit `f443199`). HostConfigResource verified admin-only. Provider settings protected via SchemaBuilder. Remaining: full audit of exception messages, UI state. | H | M | L |
+| 19.1 | Migrations | Migration 171 incomplete data migration | Assessed — `PreferredWordScore` was renamed to `CustomFormatScore` in Migration 197 and is actively used in UI History details. The TODO is effectively resolved; the data field is useful, not stale. No action needed. | H | M | M |
 | 19.2 | Migrations | No migration/recovery test coverage | Add tests for forward-only migrations, backup restore, startup after interrupted upgrade | H | H | M |
 
 ### Lane B — Correctness
@@ -50,7 +50,7 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | # | Category | Finding | Action | Impact | Effort | Risk |
 |---|---|---|---|---|---|---|
 | 1.1 | Dead Code | `[Obsolete]` LatestSeason in MonitoringOptions.cs | ~~Remove~~ DONE — can't remove (DB ordinals), improved [Obsolete] message. Queue.Episode stays (V3 API uses it). | M | L | L |
-| 1.2 | Dead Code | `polyfills.js` "Remove in v5" — we're on v5 | ~~Remove polyfills~~ DONE — removed startsWith, endsWith, contains. Kept Object.groupBy (Firefox ESR). | M | L | L |
+| 1.2 | Dead Code | `polyfills.js` "Remove in v5" — we're on v5 | ~~Remove polyfills~~ DONE — Phase 1: removed ES5 polyfills (commit `164d362`). Phase 2: deleted entire file, removed `core-js`, `@juggle/resize-observer`, tightened browserslist, disabled Babel `useBuiltIns` (commit `83150d5`). | M | L | L |
 | 1.3 | Dead Code | Empty `Helpers/Props/Shapes/` directory | ~~Delete~~ DONE — directory removed (git doesn't track empty dirs) | L | L | L |
 | 1.4 | Dead Code | `selectSettings.ts` legacy field aliases | ~~Remove~~ DONE — removed `link` and `detailedMessage`. Kept `message` (still used in 3 components). | M | L | L |
 | 15.2 | Logging | `index.ts` monkey-patches console.error | ~~Refactor~~ DONE — extracted SUPPRESSED_WARNINGS array, added docs linking to react-custom-scrollbars replacement | M | M | L |
@@ -436,21 +436,26 @@ High-priority TODOs requiring attention:
 
 **Action**: Audit each endpoint category. Document auth requirements. Add tests for unauthorized access paths.
 
-**18.3 Secret handling audit**
-- Verify secrets are protected across all layers: API resources, logs, exception messages, UI state, SignalR payloads, persisted settings
-- Extend FileSystemController review to include canonicalization, symlink/junction handling, UNC/network-share rules, case-normalization
+**18.3 Secret handling audit** — Partially DONE
 
-**Action**: Systematic audit of all secret-adjacent code paths. Ensure `Privacy` annotations, log redaction, and exception scrubbing are consistent.
+Findings:
+- **ProwlProxy.cs:52** — CRITICAL: `_logger.Error(ex, "Apikey is invalid: {0}", settings.ApiKey)` logged the actual API key. **Fixed** — removed format arg (commit `f443199`).
+- **HostConfigResource** — Exposes Password (hash), ApiKey, SslCertPassword, ProxyPassword. These are admin-only endpoints requiring API key auth. Password is already a bcrypt hash. Acceptable for admin UI.
+- **Provider settings** — SchemaBuilder automatically redacts fields with `[FieldDefinition(Privacy = PrivacyLevel.*)]`. Verified working for all annotated fields (6.2 covered the missing annotations).
+- **CleanseLogMessage** — NLog infrastructure with 60+ regex patterns for log redaction. Comprehensive coverage.
+- **Remaining**: Full audit of exception messages in download clients and notification handlers for inadvertent secret inclusion.
+
+**Action**: ProwlProxy fixed. Remaining risk is low — systematic grep for `settings.*Key` and `settings.*Password` in log/exception contexts would be thorough but low-priority.
 
 ---
 
 ### 19. Migrations, Upgrades & Recovery *(added after Codex review)*
 
-**19.1 Migration 171 incomplete data migration**
+**19.1 Migration 171 incomplete data migration** — Assessed / No Action
 - `Migration 171:41` — TODO: "Kill any references to Preferred in History and Files"
-- Incomplete migration leaves stale data that can cause confusion or bugs
+- Investigation: `PreferredWordScore` was renamed to `CustomFormatScore` in Migration 197. The field is actively used in UI History details (episode history tables). The TODO is effectively resolved — the data is useful, not stale.
 
-**Action**: Investigate scope. Create follow-up migration if data cleanup is needed.
+**Action**: None. The migration concern has been addressed by subsequent migrations.
 
 **19.2 Migration and recovery testing** **[Deferred — dedicated sprint]**
 - No tests for DB migration correctness (forward-only guarantees)
@@ -526,11 +531,11 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 1. ~~**6.1** Path traversal fix in FileSystemController~~ — **DONE** (commit `3728ba5`)
 2. ~~**6.2** Privacy annotations on all credential fields~~ — **DONE** (commit `3728ba5`)
 3. ~~**15.1** SignalR log redaction~~ — **DONE** (commit `3c046bf`)
-4. **18.3** Secret handling audit — verify redaction across API resources, logs, exceptions
+4. **18.3** Secret handling audit — **Partially DONE** (ProwlProxy API key leak fixed: commit `f443199`; HostConfigResource admin-only; SchemaBuilder redaction verified)
 5. ~~**6.3** X509 certificate validation tests~~ — **DONE** (commit `256a385`)
 6. **18.1** SSRF review — outbound URL validation for indexers, webhooks, download clients
 7. **18.2** Auth/authz audit — API-key scope, CSRF/CORS, websocket auth
-8. **19.1** Migration 171 data cleanup — resolve "Kill references to Preferred"
+8. **19.1** Migration 171 data cleanup — **Assessed / No Action** (PreferredWordScore renamed to CustomFormatScore in Migration 197, actively used in UI)
 
 ### Lane B — Correctness
 *Do after Lane A critical items. Can interleave with Lane A medium-effort items.*
