@@ -34,7 +34,7 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 - [ ] **HostConfigResource split** (4.1) — high compatibility cost, defer
 - [ ] **Lodash removal** (14.2) — replace when editing those files
 - [ ] **jQuery removal** (14.3) — replace with fetch when touching
-- [ ] **Drop legacy browser shims & polyfills** — Remove all shims, polyfills, and dependencies that exist solely to support old browsers (e.g. `core-js` polyfills, remaining `polyfills.js` entries, `@juggle/resize-observer`, browserslist-driven transpilation). Audit `package.json` dependencies and Babel/PostCSS config for anything targeting pre-modern browsers.
+- [x] **Drop legacy browser shims & polyfills** — Removed `polyfills.js` (console shims + Object.groupBy), `core-js`, `@juggle/resize-observer`, `Shims` resolve path. Tightened browserslist to drop Firefox ESR 115 and Opera Mini. Disabled Babel `useBuiltIns`.
 
 ## Other Planned Work
 

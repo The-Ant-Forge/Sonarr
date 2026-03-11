@@ -40,7 +40,7 @@ module.exports = (env) => {
 
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
-      modules: [srcFolder, path.join(srcFolder, 'Shims'), 'node_modules'],
+      modules: [srcFolder, 'node_modules'],
       alias: {},
       fallback: {
         buffer: false,
@@ -165,8 +165,7 @@ module.exports = (env) => {
                       modules: false,
                       loose: true,
                       debug: false,
-                      useBuiltIns: 'entry',
-                      corejs: '3.42',
+                      useBuiltIns: false,
                     },
                   ],
                 ],

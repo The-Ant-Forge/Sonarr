@@ -18,7 +18,10 @@
   "readmeFilename": "readme.md",
   "main": "index.ts",
   "browserslist": [
-    "defaults"
+    "> 0.5%",
+    "last 2 versions",
+    "not dead",
+    "not op_mini all"
   ],
   "dependencies": {
     "@floating-ui/react": "0.27.19",
@@ -27,7 +30,6 @@
     "@fortawesome/free-regular-svg-icons": "7.2.0",
     "@fortawesome/free-solid-svg-icons": "7.2.0",
     "@fortawesome/react-fontawesome": "3.2.0",
-    "@juggle/resize-observer": "3.4.0",
     "@microsoft/signalr": "10.0.0",
     "@sentry/browser": "10.43.0",
     "@tanstack/react-query": "5.90.21",
@@ -103,7 +105,6 @@
     "autoprefixer": "10.4.27",
     "babel-loader": "9.2.1",
     "babel-plugin-inline-classnames": "2.0.1",
-    "core-js": "3.48.0",
     "css-loader": "7.1.4",
     "css-modules-typescript-loader": "4.0.1",
     "eslint": "9.39.4",

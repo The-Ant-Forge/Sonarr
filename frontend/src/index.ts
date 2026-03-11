@@ -1,4 +1,3 @@
-import './polyfills';
 import 'Styles/globals.css';
 import './index.css';
 
