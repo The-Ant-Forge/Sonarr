@@ -32,17 +32,17 @@ Findings are grouped into three execution lanes and ranked by Impact (H/M/L) the
 | 5.1 | Error Handling | 4 swallowed exceptions across backend | ~~Log exception details~~ DONE — added logging to ImportMechanismCheck, DbFactory, RTorrentProxy, createAjaxRequest | H | L | L |
 | 8.1 | Test Gaps | Test name/assertion mismatch in `CoverExistsSpecificationFixture` | ~~Fix mismatch~~ DONE — test name corrected (assertion was correct) | H | L | L |
 | 5.3 | Error Handling | `DelayProfileService.cs:114` silent return | ~~Throw when item not found~~ DONE — throws ModelNotFoundException | M | L | L |
-| 20.1 | Concurrency | Command handler duplicate execution | Review for race conditions, missing cancellation tokens | M | M | M |
-| 20.2 | Concurrency | Unbounded parallelism in scans/imports | Add bounded concurrency for I/O-heavy operations | M | M | M |
-| 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Check disposal, timeouts, retry policies, rate limiting | M | M | L |
+| 20.1 | Concurrency | Command handler duplicate execution | Assessed — in-memory dedup exists with narrow race window; 3-thread pool + IsExclusive/IsLongRunning flags mitigate. DB unique constraint would be proper fix but low real-world risk. | M | M | M |
+| 20.2 | Concurrency | Unbounded parallelism in scans/imports | Assessed — indexer searches use unbounded Task.WhenAll (mitigated by per-indexer rate limits); FFProbe has no concurrency limiter. SemaphoreSlim around FFProbe would be highest-value fix. | M | M | M |
+| 20.3 | Concurrency | Resource lifecycle (HttpClient, file handles) | Assessed — HttpClient pooled per-proxy (good), FileStream disposal correct, HappyEyeballs cleanup excellent. Gap: no external CancellationToken on IHttpClient. Low real-world risk. | M | M | L |
 | 5.2 | Error Handling | Download clients catch broad `Exception` | Assessed — catches are in validation methods, broad catch is acceptable as last-resort fallback | M | M | L |
 | 8.3 | Test Gaps | Security-critical code untested (Auth, Validation, FileSystem) | Targeted first-pass tests for risky subsets | H | M | L |
 | 17.1 | Stale Tests | 7 `[Ignore]` tests with stale reasons | ~~Triage~~ DONE — 2 removed, 1 re-enabled, 3 docs improved | M | L | L |
 | 16.2 | API Parity | `ProviderControllerBase` V5 fallback to body ID | ~~Remove~~ DONE — V5 now uses route ID only | M | L | M |
 | 11.2 | Robustness | `window.Sonarr` null guard missing | ~~Add guard~~ DONE — error page shown if initialization fails | M | L | L |
 | 7.2 | Type Safety | `window.Sonarr` untyped in 40+ locations | Deferred — init guard (11.2) mitigates crash risk; typed accessor is large refactor for 30+ files | M | M | L |
-| 7.3 | Type Safety | Unsafe type assertions (`as unknown as`, `{} as T`) | Fix underlying types | M | M | M |
-| 5.4 | Error Handling | Frontend stores raw XHR in error state | Normalize error structure | M | M | M |
+| 7.3 | Type Safety | Unsafe type assertions (`as unknown as`, `{} as T`) | Assessed — all 3 instances are at Redux/AJAX system boundaries where types can't be enforced without rewriting the underlying untyped systems. Deferred to Redux→Zustand migration. | M | M | M |
+| 5.4 | Error Handling | Frontend stores raw XHR in error state | Assessed — error handlers are in untyped JS files (`createSaveHandler.js`, etc.) pending Redux→Zustand rewrite. Normalizing in code about to be replaced adds no value. | M | M | M |
 | 10.1 | Performance | `VideoFileInfoReader` re-reads media info | ~~Implement cache~~ DONE — 30min rolling cache keyed on path/mtime/size | M | M | L |
 
 ### Lane C — Maintainability (opportunistic)
@@ -464,25 +464,40 @@ High-priority TODOs requiring attention:
 
 ### 20. Concurrency, Cancellation & Resource Lifecycle *(added after Codex review)*
 
-**20.1 Command handler duplicate execution**
-- Command handlers and scheduled jobs may not guard against concurrent execution
-- Risk: duplicate imports, downloads, or notifications
+**20.1 Command handler duplicate execution** — Assessed
 
-**Action**: Review command handlers for idempotency. Check for duplicate execution guards in scan/import flows.
+Investigation findings:
+- `CommandQueueManager.Push()` has in-memory deduplication via `CommandEqualityComparer` under `lock (_commandQueue)`
+- `CommandQueue.TryGet()` implements `IsExclusive` and `IsLongRunning` flags to prevent conflicting concurrent execution
+- **Gap**: Dedup check is in-memory only; no database unique constraint. Narrow race window exists between command completion and 5-minute DB cleanup.
+- **Risk**: LOW-MEDIUM. Worst case is duplicate RSS sync (wasteful, not data-corrupting). 3-thread pool (`THREAD_LIMIT = 3`) is the primary safety valve.
+- **CancellationToken**: Queue dequeuing supports cancellation, but `IExecute<TCommand>.Execute()` has no token parameter — handlers are uninterruptible.
 
-**20.2 Bounded parallelism**
-- Media scanning, importing, and external API calls may have unbounded fan-out
-- One slow/failing provider could saturate I/O or thread pool
+**Action**: Document as known limitation. DB unique constraint on `(CommandName, CommandBody)` would be the proper fix but is non-trivial and low real-world impact.
 
-**Action**: Review scan/import flows for bounded concurrency (SemaphoreSlim, Channel, etc.). Check rate limiting against external services.
+**20.2 Bounded parallelism** — Assessed
 
-**20.3 Resource lifecycle**
-- `HttpClient` usage patterns — are clients reused or recreated per-request?
-- Response/stream disposal — are HTTP responses, file handles properly disposed?
-- Timeout and retry policies — are they consistent across all external integrations?
-- CancellationToken propagation — do long-running operations support cancellation?
+Investigation findings:
+- **DiskScanService**: Fully sequential per-series (safe). Heavy I/O but single-threaded within each scan.
+- **ImportDecisionMaker**: Sequential per-file loop (safe).
+- **Indexer searches**: `Task.WhenAll()` fires ALL enabled indexers in parallel with no global cap. Mitigated by per-indexer `RateLimitService` (2s default) and graceful 429 handling.
+- **FFProbe execution**: No concurrency limiter on subprocess creation during media info/sample detection. Mitigated by VideoFileInfoReader cache.
+- **Global safety valve**: 3-thread command pool prevents unbounded command-level parallelism.
 
-**Action**: Audit HttpClient factory usage, IDisposable patterns, timeout configuration. Ensure cancellation tokens flow through async call chains.
+**Action**: Add `SemaphoreSlim` around FFProbe calls (highest-value fix). Indexer parallelism is acceptable given per-indexer rate limits. Document 3-thread pool as intentional design.
+
+**20.3 Resource lifecycle** — Assessed
+
+Investigation findings:
+- **HttpClient pooling**: `ManagedHttpDispatcher.GetClient()` caches per-proxy config via `_httpClientCache` with `SocketsHttpHandler` (`MaxConnectionsPerServer = 12`). Follows Microsoft best practices.
+- **FileStream disposal**: Correct — uses `await using` for download streams.
+- **Response/request disposal**: Correct — `using var` for HttpRequestMessage, HttpResponseMessage, CancellationTokenSource.
+- **HappyEyeballs**: Excellent socket cleanup — failed connection attempts explicitly disposed.
+- **Timeouts**: Consistent — 100s default, 300s for downloads, enforced via per-request CancellationTokenSource.
+- **Gap**: `IHttpClient` async methods don't accept external CancellationToken — callers can't cancel in-flight requests.
+- **Gap**: Sync-over-async wrappers present (`Task.Run().GetAwaiter().GetResult()`) — mitigated by running on dedicated command threads.
+
+**Action**: Low real-world risk. Adding CancellationToken to IHttpClient would be the proper fix but requires touching all callers. Document as future improvement.
 
 ---
 
@@ -530,10 +545,10 @@ Work proceeds in three lanes. Lane A (security) takes precedence, then Lane B (c
 8. ~~**11.2** window.Sonarr initialization guard~~ — **DONE** (commit `9bb49ca`)
 9. **7.2** Typed window.Sonarr accessor — **Deferred** (init guard mitigates crash risk; 30+ file refactor)
 10. **5.2** Narrow exception types in download clients — **Assessed** (catches are in validation methods, broad catch acceptable)
-11. **20.1–20.3** Concurrency/resource lifecycle review (investigate, fix critical issues)
+11. **20.1–20.3** Concurrency/resource lifecycle review — **Assessed** (see detailed findings in categories 20.1–20.3; only actionable item: SemaphoreSlim for FFProbe)
 12. ~~**10.1** VideoFileInfoReader cache~~ — **DONE** (commit `a9d43c5`)
-13. **5.4** Frontend error normalization
-14. **7.3** Fix unsafe type assertions
+13. **5.4** Frontend error normalization — **Assessed** (blocked on Redux→Zustand migration; error handlers in untyped JS)
+14. **7.3** Fix unsafe type assertions — **Assessed** (all 3 at Redux/AJAX boundaries; deferred to migration)
 
 ### Lane C — Maintainability (opportunistic)
 *Do when touching related files or between other work.*
