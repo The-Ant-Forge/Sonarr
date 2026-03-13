@@ -9,7 +9,7 @@ namespace Sonarr.Api.V5.Settings;
 public class MediaManagementSettingsResource : RestResource
 {
     public bool AutoUnmonitorPreviouslyDownloadedEpisodes { get; set; }
-    public bool UnmonitorOnCutoffMet { get; set; }
+    public bool UnmonitorOnDownload { get; set; }
     public string? RecycleBin { get; set; }
     public int RecycleBinCleanupDays { get; set; }
     public ProperDownloadTypes DownloadPropersAndRepacks { get; set; }
@@ -17,6 +17,7 @@ public class MediaManagementSettingsResource : RestResource
     public bool DeleteEmptyFolders { get; set; }
     public FileDateType FileDate { get; set; }
     public RescanAfterRefreshType RescanAfterRefresh { get; set; }
+    public bool RefreshMonitoredOnly { get; set; }
 
     public bool SetPermissionsLinux { get; set; }
     public string? ChmodFolder { get; set; }
@@ -43,7 +44,7 @@ public static class MediaManagementConfigResourceMapper
         return new MediaManagementSettingsResource
         {
             AutoUnmonitorPreviouslyDownloadedEpisodes = model.AutoUnmonitorPreviouslyDownloadedEpisodes,
-            UnmonitorOnCutoffMet = model.UnmonitorOnCutoffMet,
+            UnmonitorOnDownload = model.UnmonitorOnDownload,
             RecycleBin = model.RecycleBin,
             RecycleBinCleanupDays = model.RecycleBinCleanupDays,
             DownloadPropersAndRepacks = model.DownloadPropersAndRepacks,
@@ -51,6 +52,7 @@ public static class MediaManagementConfigResourceMapper
             DeleteEmptyFolders = model.DeleteEmptyFolders,
             FileDate = model.FileDate,
             RescanAfterRefresh = model.RescanAfterRefresh,
+            RefreshMonitoredOnly = model.RefreshMonitoredOnly,
 
             SetPermissionsLinux = model.SetPermissionsLinux,
             ChmodFolder = model.ChmodFolder,

@@ -1,38 +1,35 @@
-# Spec: Unmonitor on Cutoff Met
+# Spec: Unmonitor on Download
 
 ## Problem
 
-Sonarr continues monitoring episodes after download, searching indexers for upgrades even when the imported file already meets the quality profile's cutoff. This wastes indexer API calls, bandwidth, and download client resources.
+Sonarr continues monitoring episodes after download, searching indexers for upgrades even when the user considers the episode "done." This wastes indexer API calls, bandwidth, and download client resources for users who don't want automatic upgrades.
 
 ## Solution
 
-A new global setting **Disable Monitoring** (default: off) in Settings > Media Management > File Management. When enabled, episodes are automatically unmonitored after a file import once the imported file's quality meets or exceeds the quality profile's cutoff.
+A global setting **Unmonitor On Download** (default: off) in Settings > Media Management > File Management. When enabled, episodes are automatically unmonitored after any file import. Users can re-monitor episodes manually if they want to search for upgrades.
 
 ### UI Specification
 
-- **Location**: Settings > Media Management > File Management section
-- **Label**: "Disable Monitoring"
+- **Location**: Settings > Media Management > File Management section (advanced)
+- **Label**: "Unmonitor On Download"
 - **Type**: Checkbox
-- **Description**: "Turn off monitoring of downloaded media once the quality cutoff is met"
+- **Description**: "Automatically unmonitor episodes once they are downloaded. Episodes can be re-monitored manually."
 - **Default**: Off (unchecked)
 
 ## Behaviour
 
 - **Trigger**: `EpisodeFileAddedEvent` — fires after every successful import (new download, quality upgrade, or manual import)
-- **Check**: Uses `IUpgradableSpecification.QualityCutoffNotMet()` to compare the imported file's quality against the series' quality profile cutoff
-- **Action**: If cutoff is met and the setting is enabled, sets `episode.Monitored = false` for each affected episode before persisting
-- **Scope**: Quality cutoff only (not custom format score cutoff). Custom format cutoff can be added later if needed
+- **Action**: If the setting is enabled, sets `episode.Monitored = false` for each affected episode in a single DB write alongside the file ID assignment
+- **Scope**: All downloads regardless of quality. No cutoff check — the intent is "I got it, stop looking."
 
 ### When it fires
 
-| Scenario | Cutoff met? | Result |
-|----------|-------------|--------|
-| New download at or above cutoff | Yes | Unmonitored |
-| New download below cutoff | No | Stays monitored |
-| Upgrade that reaches cutoff | Yes | Unmonitored |
-| Upgrade still below cutoff | No | Stays monitored |
-| Manual import at cutoff | Yes | Unmonitored |
-| Setting is off | N/A | No change (existing behaviour) |
+| Scenario | Result |
+|----------|--------|
+| New download (any quality) | Unmonitored |
+| Upgrade import | Unmonitored |
+| Manual import | Unmonitored |
+| Setting is off | No change (existing behaviour) |
 
 ### Relationship to existing settings
 
@@ -45,15 +42,17 @@ A new global setting **Disable Monitoring** (default: off) in Settings > Media M
 
 | File | Change |
 |------|--------|
-| `IConfigService.cs` | `bool UnmonitorOnCutoffMet { get; set; }` |
-| `ConfigService.cs` | Property with `GetValueBoolean("UnmonitorOnCutoffMet")`, default `false` |
+| `IConfigService.cs` | `bool UnmonitorOnDownload { get; set; }` |
+| `ConfigService.cs` | Property with `GetValueBoolean("UnmonitorOnDownload")`, default `false` |
+
+**Note:** Uses a new DB key `UnmonitorOnDownload`, distinct from the upstream `UnmonitorOnCutoffMet` key. This prevents behavioral surprises on upgrade/rollback between this fork and upstream Sonarr.
 
 ### API layer (V3 and V5)
 
 | File | Change |
 |------|--------|
-| `Sonarr.Api.V3/Config/MediaManagementConfigResource.cs` | Add `UnmonitorOnCutoffMet` property + mapper |
-| `Sonarr.Api.V5/Settings/MediaManagementSettingsResource.cs` | Add `UnmonitorOnCutoffMet` property + mapper |
+| `Sonarr.Api.V3/Config/MediaManagementConfigResource.cs` | `UnmonitorOnDownload` property + mapper |
+| `Sonarr.Api.V5/Settings/MediaManagementSettingsResource.cs` | `UnmonitorOnDownload` property + mapper |
 
 Both API versions are maintained: V5 is used by the frontend; V3 is preserved for third-party tool compatibility.
 
@@ -61,40 +60,39 @@ Both API versions are maintained: V5 is used by the frontend; V3 is preserved fo
 
 | File | Change |
 |------|--------|
-| `EpisodeService.cs` | Inject `IUpgradableSpecification` and `ISeriesService`, check cutoff in `Handle(EpisodeFileAddedEvent)` handler |
+| `EpisodeService.cs` | Check `UnmonitorOnDownload` in `Handle(EpisodeFileAddedEvent)` handler |
+| `EpisodeRepository.cs` | `SetFileId` extended with `bool unmonitor` parameter — combines file ID + monitored flag in a single `SetFields` call |
 
-The handler will:
-1. Check if `UnmonitorOnCutoffMet` is enabled
-2. Load the series and its quality profile
-3. For each episode linked to the added file, call `QualityCutoffNotMet()`
-4. If cutoff IS met (i.e. `QualityCutoffNotMet()` returns `false`), set `episode.Monitored = false`
-5. Persist the change via `EpisodeRepository`
+The handler:
+1. Checks if `UnmonitorOnDownload` is enabled
+2. For each episode linked to the added file, calls `SetFileId(episode, fileId, unmonitor: true)` to set both fields atomically
+3. Single DB write per episode (matches `ClearFileId` pattern)
 
 ### Frontend
 
 | File | Change |
 |------|--------|
-| `useMediaManagementSettings.ts` | Add `unmonitorOnCutoffMet: boolean` to `MediaManagementSettingsModel` |
-| `MediaManagement.tsx` | Add checkbox in File Management section, below existing "Unmonitor Deleted Episodes" |
+| `useMediaManagementSettings.ts` | `unmonitorOnDownload: boolean` in settings model |
+| `MediaManagement.tsx` | Checkbox in File Management section, below "Unmonitor Deleted Episodes" |
 
 ### Localization
 
-| File | Change |
-|------|--------|
-| `en.json` | `UnmonitorOnCutoffMet` label key ("Disable Monitoring") |
-| `en.json` | `UnmonitorOnCutoffMetHelpText` help text key ("Turn off monitoring of downloaded media once the quality cutoff is met") |
+| Key | Value |
+|-----|-------|
+| `UnmonitorOnDownload` | "Unmonitor On Download" |
+| `UnmonitorOnDownloadHelpText` | "Automatically unmonitor episodes once they are downloaded. Episodes can be re-monitored manually." |
 
 ## Testing
 
 ### Unit tests
 
-- `EpisodeService` tests: verify unmonitoring triggers on cutoff met, does not trigger when cutoff not met, does not trigger when setting is off
+- `HandleEpisodeFileAddedFixture`: verify unmonitoring triggers when enabled, does not trigger when disabled, handles multi-episode files
 - Config tests: verify default value is `false`, verify persistence round-trip
 
 ### Manual testing
 
-- Toggle appears in Settings > Media Management > File Management
+- Toggle appears in Settings > Media Management > File Management (show advanced)
 - Setting persists across page reloads
-- Import of file at/above cutoff unmonitors the episode(s) when enabled
-- Import of file below cutoff leaves monitoring unchanged
+- Import of any file unmonitors the episode(s) when enabled
 - Setting disabled: no monitoring changes on any import
+- Episodes can be re-monitored manually after being unmonitored

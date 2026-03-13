@@ -29,7 +29,6 @@ const defaultFontSize = parseInt(fonts.defaultFontSize);
 const lineHeight = parseFloat(fonts.lineHeight);
 
 // Hardcoded height based on line-height of 32 + bottom margin of 10.
-// Less side-effecty than using react-measure.
 const TITLE_HEIGHT = 42;
 
 interface SeriesIndexOverviewProps {

@@ -248,13 +248,14 @@ namespace NzbDrone.Core.Tv
             }
             else
             {
-                var allSeries = _seriesService.GetAllSeries().OrderBy(c => c.SortTitle).ToList();
+                var refreshMonitoredOnly = _configService.RefreshMonitoredOnly && trigger != CommandTrigger.Manual;
+                var allSeries = refreshMonitoredOnly
+                    ? _seriesService.GetMonitoredSeries().OrderBy(c => c.SortTitle).ToList()
+                    : _seriesService.GetAllSeries().OrderBy(c => c.SortTitle).ToList();
 
-                if (_configService.RefreshMonitoredOnly)
+                if (refreshMonitoredOnly)
                 {
-                    var totalCount = allSeries.Count;
-                    allSeries = allSeries.Where(s => s.Monitored).ToList();
-                    _logger.Debug("RefreshMonitoredOnly is enabled, processing {0} of {1} series", allSeries.Count, totalCount);
+                    _logger.Debug("RefreshMonitoredOnly is enabled, processing {0} monitored series", allSeries.Count);
                 }
 
                 var scannedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

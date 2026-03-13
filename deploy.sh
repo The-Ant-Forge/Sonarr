@@ -66,15 +66,20 @@ else
 
   # Also clean up any stale flat-layout files from previous deploys
   # (DLLs/EXEs that were copied to root instead of bin/)
+  # Only remove known build-output patterns, not arbitrary user files
   stale_count=0
-  for item in "$INSTALL_DIR"/*.dll "$INSTALL_DIR"/*.exe "$INSTALL_DIR"/*.pdb "$INSTALL_DIR"/*.xml "$INSTALL_DIR"/*.json; do
+  for item in "$INSTALL_DIR"/*.dll "$INSTALL_DIR"/*.exe "$INSTALL_DIR"/*.pdb "$INSTALL_DIR"/*.deps.json "$INSTALL_DIR"/*.runtimeconfig.json "$INSTALL_DIR"/*.staticwebassets.endpoints.json; do
     if [[ -f "$item" ]]; then
       basename=$(basename "$item")
-      # Preserve data files
-      if [[ "$basename" == "config.xml" ]]; then
-        continue
-      fi
       echo "  Removing stale: $basename"
+      rm -f "$item"
+      stale_count=$((stale_count + 1))
+    fi
+  done
+  # Remove stale XML doc files (Sonarr.*.xml) but preserve config.xml and other user XML
+  for item in "$INSTALL_DIR"/Sonarr.*.xml "$INSTALL_DIR"/Service*.xml; do
+    if [[ -f "$item" ]]; then
+      echo "  Removing stale: $(basename "$item")"
       rm -f "$item"
       stale_count=$((stale_count + 1))
     fi

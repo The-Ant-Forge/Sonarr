@@ -19,6 +19,7 @@ namespace NzbDrone.Core.Tv
         List<int> AllSeriesTvdbIds();
         Dictionary<int, string> AllSeriesPaths();
         Dictionary<int, List<int>> AllSeriesTags();
+        List<Series> GetMonitored();
     }
 
     public class SeriesRepository : BasicRepository<Series>, ISeriesRepository
@@ -83,6 +84,11 @@ namespace NzbDrone.Core.Tv
         {
             return Query(s => s.Path == path)
                         .FirstOrDefault();
+        }
+
+        public List<Series> GetMonitored()
+        {
+            return Query(s => s.Monitored);
         }
 
         public List<int> AllSeriesTvdbIds()

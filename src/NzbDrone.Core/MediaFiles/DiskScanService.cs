@@ -172,7 +172,7 @@ namespace NzbDrone.Core.MediaFiles
             }
 
             fileInfoStopwatch.Stop();
-            _logger.Trace("Reprocessing existing files complete for: {0} [{1}]", series, decisionsStopwatch.Elapsed);
+            _logger.Trace("Reprocessing existing files complete for: {0} [{1}]", series, fileInfoStopwatch.Elapsed);
 
             RemoveEmptySeriesFolder(series.Path);
 
@@ -307,13 +307,14 @@ namespace NzbDrone.Core.MediaFiles
             }
             else
             {
-                var allSeries = _seriesService.GetAllSeries();
+                var refreshMonitoredOnly = _configService.RefreshMonitoredOnly && message.Trigger != CommandTrigger.Manual;
+                var allSeries = refreshMonitoredOnly
+                    ? _seriesService.GetMonitoredSeries()
+                    : _seriesService.GetAllSeries();
 
-                if (_configService.RefreshMonitoredOnly)
+                if (refreshMonitoredOnly)
                 {
-                    var totalCount = allSeries.Count;
-                    allSeries = allSeries.Where(s => s.Monitored).ToList();
-                    _logger.Debug("RefreshMonitoredOnly is enabled, scanning {0} of {1} series", allSeries.Count, totalCount);
+                    _logger.Debug("RefreshMonitoredOnly is enabled, scanning {0} monitored series", allSeries.Count);
                 }
 
                 var scannedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

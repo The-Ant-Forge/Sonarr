@@ -496,14 +496,14 @@ function MediaManagement() {
               </FormGroup>
 
               <FormGroup size={sizes.MEDIUM}>
-                <FormLabel>{translate('UnmonitorOnCutoffMet')}</FormLabel>
+                <FormLabel>{translate('UnmonitorOnDownload')}</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
-                  name="unmonitorOnCutoffMet"
-                  helpText={translate('UnmonitorOnCutoffMetHelpText')}
+                  name="unmonitorOnDownload"
+                  helpText={translate('UnmonitorOnDownloadHelpText')}
                   onChange={handleInputChange}
-                  {...settings.unmonitorOnCutoffMet}
+                  {...settings.unmonitorOnDownload}
                 />
               </FormGroup>
 

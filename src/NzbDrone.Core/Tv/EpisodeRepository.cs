@@ -29,7 +29,7 @@ namespace NzbDrone.Core.Tv
         void SetMonitoredFlat(Episode episode, bool monitored);
         void SetMonitoredBySeason(int seriesId, int seasonNumber, bool monitored);
         void SetMonitored(IEnumerable<int> ids, bool monitored);
-        void SetFileId(Episode episode, int fileId);
+        void SetFileId(Episode episode, int fileId, bool unmonitor = false);
         void ClearFileId(Episode episode, bool unmonitor);
     }
 
@@ -192,11 +192,12 @@ namespace NzbDrone.Core.Tv
             SetFields(episodes, p => p.Monitored);
         }
 
-        public void SetFileId(Episode episode, int fileId)
+        public void SetFileId(Episode episode, int fileId, bool unmonitor = false)
         {
             episode.EpisodeFileId = fileId;
+            episode.Monitored &= !unmonitor;
 
-            SetFields(episode, ep => ep.EpisodeFileId);
+            SetFields(episode, ep => ep.EpisodeFileId, ep => ep.Monitored);
 
             ModelUpdated(episode, true);
         }

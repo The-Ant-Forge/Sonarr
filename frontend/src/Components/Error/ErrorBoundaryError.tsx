@@ -40,7 +40,7 @@ function ErrorBoundaryError(props: ErrorBoundaryErrorProps) {
         {error?.stack ? (
           <pre className={styles.stackTrace}>{error.stack}</pre>
         ) : (
-          <div>{info.componentStack}</div>
+          <div>{info?.componentStack}</div>
         )}
 
         <div className={styles.version}>Version: {window.Sonarr.version}</div>

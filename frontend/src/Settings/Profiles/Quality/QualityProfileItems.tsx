@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import useMeasure from 'react-use-measure';
 import FormGroup from 'Components/Form/FormGroup';
 import FormInputHelpText from 'Components/Form/FormInputHelpText';
 import FormLabel from 'Components/Form/FormLabel';
 import Icon from 'Components/Icon';
 import Button from 'Components/Link/Button';
+import useMeasure from 'Helpers/Hooks/useMeasure';
 import { icons, kinds, sizes } from 'Helpers/Props';
 import { Failure } from 'typings/pending';
 import translate from 'Utilities/String/translate';

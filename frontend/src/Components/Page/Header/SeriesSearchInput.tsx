@@ -167,7 +167,7 @@ function SeriesSearchInput() {
         setRequestLoading(true);
 
         const payload = {
-          value: requestValue,
+          value: requestValue.current,
           series,
         };
 

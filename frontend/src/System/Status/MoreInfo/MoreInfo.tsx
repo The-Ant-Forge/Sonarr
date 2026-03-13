@@ -32,13 +32,6 @@ function MoreInfo() {
         </DescriptionListItemDescription>
 
         <DescriptionListItemTitle>
-          {translate('Twitter')}
-        </DescriptionListItemTitle>
-        <DescriptionListItemDescription>
-          <Link to="https://twitter.com/sonarrtv">@sonarrtv</Link>
-        </DescriptionListItemDescription>
-
-        <DescriptionListItemTitle>
           {translate('Discord')}
         </DescriptionListItemTitle>
         <DescriptionListItemDescription>

@@ -14,7 +14,6 @@ module.exports = {
 
     // Stage 3
     ['@babel/plugin-transform-class-properties', { loose }],
-    '@babel/plugin-syntax-dynamic-import',
   ],
   env: {
     development: {

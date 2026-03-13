@@ -296,18 +296,16 @@ namespace NzbDrone.Core.Tv
         public void Handle(EpisodeFileAddedEvent message)
         {
             var episodeFile = message.EpisodeFile;
-            var unmonitorOnDownload = _configService.UnmonitorOnCutoffMet;
+            var unmonitorOnDownload = _configService.UnmonitorOnDownload;
 
             foreach (var episode in episodeFile.Episodes.Value)
             {
-                _episodeRepository.SetFileId(episode, episodeFile.Id);
-
                 if (unmonitorOnDownload)
                 {
                     _logger.Debug("Unmonitoring episode on download [{0}] > [{1}]", episodeFile.RelativePath, episode);
-                    episode.Monitored = false;
-                    _episodeRepository.Update(episode);
                 }
+
+                _episodeRepository.SetFileId(episode, episodeFile.Id, unmonitorOnDownload);
 
                 lock (_cache)
                 {

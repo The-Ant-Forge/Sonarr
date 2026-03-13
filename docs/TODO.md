@@ -41,5 +41,7 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 
 - [x] Code review spec (see `docs/spec-code-review-260310.md`)
 - [x] Code review implementation (Lanes A → B → C per spec) — All 3 lanes complete (8+14+11 = 33 items)
-- [ ] Unmonitor feature refinements (if needed after testing)
-- [ ] Deploy script testing with `bin/` directory layout
+- [x] Unmonitor feature refinements — Renamed to `UnmonitorOnDownload` with new DB key, simplified to unconditional unmonitor, single DB write, spec updated
+- [x] Deploy script testing with `bin/` directory layout — Deployed successfully, stale flat-layout cleanup verified
+- [ ] **Test fixtures for new features** — `HandleEpisodeFileAddedFixture`, `RefreshSeriesService` monitored-only tests, `DiskScanService.Execute` tests
+- [ ] **Second code review items** — see `docs/Code-Review-260313.md` Lane D (deferred test coverage)
