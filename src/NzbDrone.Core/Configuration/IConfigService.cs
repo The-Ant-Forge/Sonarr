@@ -41,6 +41,7 @@ namespace NzbDrone.Core.Configuration
         bool ImportExtraFiles { get; set; }
         string ExtraFileExtensions { get; set; }
         RescanAfterRefreshType RescanAfterRefresh { get; set; }
+        bool RefreshMonitoredOnly { get; set; }
         EpisodeTitleRequiredType EpisodeTitleRequired { get; set; }
         string UserRejectedExtensions { get; set; }
 

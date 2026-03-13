@@ -250,6 +250,15 @@ namespace NzbDrone.Core.Tv
             {
                 var allSeries = _seriesService.GetAllSeries().OrderBy(c => c.SortTitle).ToList();
 
+                if (_configService.RefreshMonitoredOnly)
+                {
+                    var totalCount = allSeries.Count;
+                    allSeries = allSeries.Where(s => s.Monitored).ToList();
+                    _logger.Debug("RefreshMonitoredOnly is enabled, processing {0} of {1} series", allSeries.Count, totalCount);
+                }
+
+                var scannedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
                 foreach (var series in allSeries)
                 {
                     var seriesLocal = series;
@@ -270,13 +279,21 @@ namespace NzbDrone.Core.Tv
                         }
 
                         UpdateTags(series);
-                        RescanSeries(seriesLocal, false, trigger);
+
+                        if (scannedPaths.Add(seriesLocal.Path))
+                        {
+                            RescanSeries(seriesLocal, false, trigger);
+                        }
                     }
                     else
                     {
                         _logger.Info("Skipping refresh of series: {0}", seriesLocal.Title);
                         UpdateTags(series);
-                        RescanSeries(seriesLocal, false, trigger);
+
+                        if (scannedPaths.Add(seriesLocal.Path))
+                        {
+                            RescanSeries(seriesLocal, false, trigger);
+                        }
                     }
                 }
             }

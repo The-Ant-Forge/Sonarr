@@ -309,9 +309,21 @@ namespace NzbDrone.Core.MediaFiles
             {
                 var allSeries = _seriesService.GetAllSeries();
 
+                if (_configService.RefreshMonitoredOnly)
+                {
+                    var totalCount = allSeries.Count;
+                    allSeries = allSeries.Where(s => s.Monitored).ToList();
+                    _logger.Debug("RefreshMonitoredOnly is enabled, scanning {0} of {1} series", allSeries.Count, totalCount);
+                }
+
+                var scannedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
                 foreach (var series in allSeries)
                 {
-                    Scan(series);
+                    if (scannedPaths.Add(series.Path))
+                    {
+                        Scan(series);
+                    }
                 }
             }
         }

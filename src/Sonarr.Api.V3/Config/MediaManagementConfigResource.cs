@@ -17,6 +17,7 @@ namespace Sonarr.Api.V3.Config
         public bool DeleteEmptyFolders { get; set; }
         public FileDateType FileDate { get; set; }
         public RescanAfterRefreshType RescanAfterRefresh { get; set; }
+        public bool RefreshMonitoredOnly { get; set; }
 
         public bool SetPermissionsLinux { get; set; }
         public string ChmodFolder { get; set; }
@@ -51,6 +52,7 @@ namespace Sonarr.Api.V3.Config
                 DeleteEmptyFolders = model.DeleteEmptyFolders,
                 FileDate = model.FileDate,
                 RescanAfterRefresh = model.RescanAfterRefresh,
+                RefreshMonitoredOnly = model.RefreshMonitoredOnly,
 
                 SetPermissionsLinux = model.SetPermissionsLinux,
                 ChmodFolder = model.ChmodFolder,

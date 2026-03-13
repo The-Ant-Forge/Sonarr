@@ -263,6 +263,12 @@ namespace NzbDrone.Core.Configuration
             set { SetValue("RescanAfterRefresh", value); }
         }
 
+        public bool RefreshMonitoredOnly
+        {
+            get { return GetValueBoolean("RefreshMonitoredOnly"); }
+            set { SetValue("RefreshMonitoredOnly", value); }
+        }
+
         public EpisodeTitleRequiredType EpisodeTitleRequired
         {
             get { return GetValueEnum("EpisodeTitleRequired", EpisodeTitleRequiredType.Always); }

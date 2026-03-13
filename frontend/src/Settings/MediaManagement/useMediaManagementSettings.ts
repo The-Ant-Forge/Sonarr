@@ -22,6 +22,7 @@ export interface MediaManagementSettingsModel {
   downloadPropersAndRepacks: string;
   enableMediaInfo: boolean;
   rescanAfterRefresh: string;
+  refreshMonitoredOnly: boolean;
   setPermissionsLinux: boolean;
   chmodFolder: string;
   chownGroup: string;

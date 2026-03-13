@@ -5,7 +5,6 @@ using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Configuration;
 using NzbDrone.Core.Datastore;
-using NzbDrone.Core.DecisionEngine.Specifications;
 using NzbDrone.Core.MediaFiles;
 using NzbDrone.Core.MediaFiles.Events;
 using NzbDrone.Core.Messaging.Events;
@@ -50,21 +49,18 @@ namespace NzbDrone.Core.Tv
     {
         private readonly IEpisodeRepository _episodeRepository;
         private readonly IConfigService _configService;
-        private readonly IUpgradableSpecification _upgradableSpecification;
         private readonly Lazy<ISeriesService> _seriesService;
         private readonly ICached<HashSet<int>> _cache;
         private readonly Logger _logger;
 
         public EpisodeService(IEpisodeRepository episodeRepository,
                               IConfigService configService,
-                              IUpgradableSpecification upgradableSpecification,
                               Lazy<ISeriesService> seriesService,
                               ICacheManager cacheManager,
                               Logger logger)
         {
             _episodeRepository = episodeRepository;
             _configService = configService;
-            _upgradableSpecification = upgradableSpecification;
             _seriesService = seriesService;
             _cache = cacheManager.GetCache<HashSet<int>>(GetType());
             _logger = logger;
@@ -300,23 +296,15 @@ namespace NzbDrone.Core.Tv
         public void Handle(EpisodeFileAddedEvent message)
         {
             var episodeFile = message.EpisodeFile;
-            var unmonitorOnCutoffMet = _configService.UnmonitorOnCutoffMet;
-            var cutoffMet = false;
-
-            if (unmonitorOnCutoffMet)
-            {
-                var series = _seriesService.Value.GetSeries(episodeFile.SeriesId);
-                var qualityProfile = series.QualityProfile.Value;
-                cutoffMet = !_upgradableSpecification.QualityCutoffNotMet(qualityProfile, episodeFile.Quality);
-            }
+            var unmonitorOnDownload = _configService.UnmonitorOnCutoffMet;
 
             foreach (var episode in episodeFile.Episodes.Value)
             {
                 _episodeRepository.SetFileId(episode, episodeFile.Id);
 
-                if (cutoffMet)
+                if (unmonitorOnDownload)
                 {
-                    _logger.Debug("Quality cutoff met for [{0}], unmonitoring episode [{1}]", episodeFile.RelativePath, episode);
+                    _logger.Debug("Unmonitoring episode on download [{0}] > [{1}]", episodeFile.RelativePath, episode);
                     episode.Monitored = false;
                     _episodeRepository.Update(episode);
                 }

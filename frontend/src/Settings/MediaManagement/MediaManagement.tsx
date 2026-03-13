@@ -572,6 +572,22 @@ function MediaManagement() {
               <FormGroup
                 advancedSettings={showAdvancedSettings}
                 isAdvanced={true}
+                size={sizes.MEDIUM}
+              >
+                <FormLabel>{translate('RefreshMonitoredSeriesOnly')}</FormLabel>
+
+                <FormInputGroup
+                  type={inputTypes.CHECK}
+                  name="refreshMonitoredOnly"
+                  helpText={translate('RefreshMonitoredSeriesOnlyHelpText')}
+                  onChange={handleInputChange}
+                  {...settings.refreshMonitoredOnly}
+                />
+              </FormGroup>
+
+              <FormGroup
+                advancedSettings={showAdvancedSettings}
+                isAdvanced={true}
               >
                 <FormLabel>{translate('ChangeFileDate')}</FormLabel>
 
