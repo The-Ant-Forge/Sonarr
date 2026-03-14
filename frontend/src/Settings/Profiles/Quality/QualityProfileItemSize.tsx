@@ -2,8 +2,9 @@ import React, { HTMLProps, useCallback, useState } from 'react';
 import ReactSlider from 'react-slider';
 import NumberInput from 'Components/Form/NumberInput';
 import Label from 'Components/Label';
+import IconButton from 'Components/Link/IconButton';
 import Popover from 'Components/Tooltip/Popover';
-import { kinds, tooltipPositions } from 'Helpers/Props';
+import { icons, kinds, tooltipPositions } from 'Helpers/Props';
 import QualityDefinitionLimits from 'Settings/Quality/Definition/QualityDefinitionLimits';
 import { InputChanged } from 'typings/inputs';
 import formatBytes from 'Utilities/Number/formatBytes';
@@ -33,6 +34,7 @@ export interface QualityProfileItemSizeProps {
   preferredSize: number | null;
   maxSize: number | null;
   onSizeChange: (props: SizeChanged) => void;
+  onCopySizesDown?: (qualityId: number) => void;
 }
 
 function trackRenderer(props: HTMLProps<HTMLDivElement>) {
@@ -55,6 +57,7 @@ export default function QualityProfileItemSize({
   maxSize,
   preferredSize,
   onSizeChange,
+  onCopySizesDown,
 }: QualityProfileItemSizeProps) {
   const [sizes, setSizes] = useState<SizeProps>({
     minSize: getSliderValue(minSize, MIN),
@@ -143,6 +146,10 @@ export default function QualityProfileItemSize({
     },
     [id, sizes, setSizes, onSizeChange]
   );
+
+  const handleCopySizesDown = useCallback(() => {
+    onCopySizesDown?.(id);
+  }, [id, onCopySizesDown]);
 
   const handleAfterSliderChange = useCallback(() => {
     setSizes({
@@ -235,13 +242,22 @@ export default function QualityProfileItemSize({
       </div>
 
       <div className={styles.megabytesPerMinuteContainer}>
+        {onCopySizesDown ? (
+          <IconButton
+            className={styles.copySizesDown}
+            name={icons.CIRCLE_DOWN}
+            title={translate('CopySizesToBelow')}
+            onPress={handleCopySizesDown}
+          />
+        ) : null}
+
         <div className={styles.megabytesPerMinute}>
           <NumberInput
             className={styles.sizeInput}
             name={`${id}.min`}
             value={minSize || MIN}
             min={MIN}
-            max={preferredSize ? preferredSize - 5 : MAX - 5}
+            max={preferredSize ? preferredSize - 3 : MAX - 3}
             step={0.1}
             isFloat={true}
             // @ts-expect-error - Typings are too loose
@@ -256,10 +272,10 @@ export default function QualityProfileItemSize({
         <div className={styles.megabytesPerMinute}>
           <NumberInput
             className={styles.sizeInput}
-            name={`${id}.min`}
-            value={preferredSize || MAX - 5}
+            name={`${id}.preferred`}
+            value={preferredSize || MAX - 3}
             min={MIN}
-            max={maxSize ? maxSize - 5 : MAX - 5}
+            max={maxSize ? maxSize - 3 : MAX - 3}
             step={0.1}
             isFloat={true}
             // @ts-expect-error - Typings are too loose

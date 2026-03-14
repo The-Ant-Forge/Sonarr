@@ -188,6 +188,7 @@ A review document in `docs/Code-Review-YYMMDD.md` (or similar) with:
 2. Review and approve findings with the user
 3. Implement approved items in focused commits
 4. Re-run tests after each change
+5. On completion of review items update the code review doc to reflect tasks done, deferred or ignored.
 
 ## Planned Work
 - **No-monitor feature**: Unmonitor series/episodes on cutoff met (similar to Radarr implementation — see `docs/Spec-UnMonitor.md` when created)

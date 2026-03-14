@@ -37,6 +37,7 @@ interface ItemProps {
   isInGroup?: boolean;
   onCreateGroupPress?: (qualityId: number) => void;
   onItemAllowedChange: (id: number, allowed: boolean) => void;
+  onCopySizesDown?: (qualityId: number) => void;
 }
 
 interface GroupProps {
@@ -74,6 +75,7 @@ export interface QualityProfileItemDragSourceActionProps {
   onDragMove: (move: DragMoveState) => void;
   onDragEnd: (didDrop: boolean) => void;
   onSizeChange: (sizeChange: SizeChanged) => void;
+  onCopySizesDown?: (qualityId: number) => void;
 }
 
 function QualityProfileItemDragSource({

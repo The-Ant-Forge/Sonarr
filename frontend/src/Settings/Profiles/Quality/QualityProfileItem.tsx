@@ -25,6 +25,7 @@ interface QualityProfileItemProps {
   onCreateGroupPress?: (qualityId: number) => void;
   onItemAllowedChange: (qualityId: number, allowed: boolean) => void;
   onSizeChange: (change: SizeChanged) => void;
+  onCopySizesDown?: (qualityId: number) => void;
 }
 
 function QualityProfileItem({
@@ -42,6 +43,7 @@ function QualityProfileItem({
   onCreateGroupPress,
   onItemAllowedChange,
   onSizeChange,
+  onCopySizesDown,
 }: QualityProfileItemProps) {
   const handleAllowedChange = useCallback(
     ({ value }: InputChanged<boolean>) => {
@@ -109,6 +111,7 @@ function QualityProfileItem({
             maxSize={maxSize}
             preferredSize={preferredSize}
             onSizeChange={onSizeChange}
+            onCopySizesDown={onCopySizesDown}
           />
         </div>
       ) : null}

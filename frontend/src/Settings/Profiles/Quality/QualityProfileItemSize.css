@@ -38,11 +38,29 @@
 
 .megabytesPerMinuteContainer {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   flex: 0 0 400px;
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--borderColor);
+}
+
+.copySizesDown {
+  composes: button from '~Components/Link/IconButton.css';
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 4px;
+  margin-right: 8px;
+  width: 20px;
+  color: var(--iconButtonColor);
+
+  &:hover {
+    color: var(--iconButtonHoverColor);
+  }
 }
 
 .megabytesPerMinute {

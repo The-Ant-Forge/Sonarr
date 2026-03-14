@@ -37,6 +37,15 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 - [x] **Drop legacy browser shims & polyfills** — Removed `polyfills.js` (console shims + Object.groupBy), `core-js`, `@juggle/resize-observer`, `Shims` resolve path. Tightened browserslist to drop Firefox ESR 115 and Opera Mini. Disabled Babel `useBuiltIns`.
 - [x] **Dependency removal sprint** — Removed 8 more packages (`copy-to-clipboard`, `react-text-truncate`, `react-lazyload`, `jdu`, `qs`, `stacktrace-js`, `use-debounce`, `react-measure`) + 3 `@types` packages. All replaced with native browser APIs or custom hooks.
 
+## Release Infrastructure
+
+- [ ] **GitHub Actions release workflow** — Create a `workflow_dispatch`-triggered workflow that:
+  - Builds backend (`dotnet build src/Sonarr.sln -c Release` + tray app)
+  - Builds frontend (`yarn build`)
+  - Packages Windows artifacts (Inno Setup installer at `distribution/windows/setup/`)
+  - Creates a GitHub Release with versioned tag and installer artifact
+  - Reference upstream's `build_v5.yml` + `deploy.yml` for patterns; all 8 existing workflows are currently disabled on the fork
+
 ## Other Planned Work
 
 - [x] Code review spec (see `docs/spec-code-review-260310.md`)

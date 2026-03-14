@@ -34,6 +34,7 @@ interface QualityProfileItemGroupProps {
   onDragMove: (drag: DragMoveState) => void;
   onDragEnd: (didDrop: boolean) => void;
   onSizeChange: (sizeChange: SizeChanged) => void;
+  onCopySizesDown?: (qualityId: number) => void;
 }
 
 function QualityProfileItemGroup({
@@ -54,6 +55,7 @@ function QualityProfileItemGroup({
   onDragMove,
   onDragEnd,
   onSizeChange,
+  onCopySizesDown,
 }: QualityProfileItemGroupProps) {
   const handleAllowedChange = useCallback(
     ({ value }: InputChanged<boolean>) => {
@@ -161,7 +163,9 @@ function QualityProfileItemGroup({
       {mode === 'default' ? null : (
         <div className={mode === 'editGroups' ? styles.items : undefined}>
           {items
-            .map(({ quality }, index) => {
+            .map((item, index) => {
+              const { quality, minSize, maxSize, preferredSize } = item;
+
               return (
                 <QualityProfileItemDragSource
                   key={quality.id}
@@ -170,9 +174,9 @@ function QualityProfileItemGroup({
                   qualityId={quality.id}
                   name={quality.name}
                   allowed={allowed}
-                  minSize={quality.minSize}
-                  maxSize={quality.maxSize}
-                  preferredSize={quality.preferredSize}
+                  minSize={minSize}
+                  maxSize={maxSize}
+                  preferredSize={preferredSize}
                   qualityIndex={`${qualityIndex}.${index + 1}`}
                   isDraggingUp={isDraggingUp}
                   isDraggingDown={isDraggingDown}
@@ -181,6 +185,7 @@ function QualityProfileItemGroup({
                   onDragMove={onDragMove}
                   onDragEnd={onDragEnd}
                   onSizeChange={onSizeChange}
+                  onCopySizesDown={onCopySizesDown}
                 />
               );
             })

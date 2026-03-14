@@ -241,6 +241,104 @@ function EditQualityProfileModalContent({
     [items, updateValue]
   );
 
+  const handleCopySizesDown = useCallback(
+    (qualityId: number) => {
+      // Build a flat list of quality IDs in display order (reversed = high-to-low)
+      const flatItems: { qualityId: number }[] = [];
+
+      for (let i = items.value.length - 1; i >= 0; i--) {
+        const item = items.value[i];
+
+        if ('quality' in item) {
+          flatItems.push({ qualityId: item.quality.id });
+        } else {
+          // Group: sub-items are also reversed in display
+          for (let j = (item as QualityProfileGroup).items.length - 1; j >= 0; j--) {
+            flatItems.push({
+              qualityId: (item as QualityProfileGroup).items[j].quality.id,
+            });
+          }
+        }
+      }
+
+      // Find source quality and its sizes
+      const sourceIndex = flatItems.findIndex(
+        (fi) => fi.qualityId === qualityId
+      );
+
+      if (sourceIndex < 0) {
+        return;
+      }
+
+      // Get the source sizes from the items
+      let sourceMinSize: number | null = null;
+      let sourceMaxSize: number | null = null;
+      let sourcePreferredSize: number | null = null;
+
+      for (const item of items.value) {
+        if ('quality' in item && item.quality.id === qualityId) {
+          sourceMinSize = item.minSize;
+          sourceMaxSize = item.maxSize;
+          sourcePreferredSize = item.preferredSize;
+          break;
+        }
+
+        if (!('quality' in item)) {
+          const subItem = (item as QualityProfileGroup).items.find(
+            (si) => si.quality.id === qualityId
+          );
+
+          if (subItem) {
+            sourceMinSize = subItem.minSize;
+            sourceMaxSize = subItem.maxSize;
+            sourcePreferredSize = subItem.preferredSize;
+            break;
+          }
+        }
+      }
+
+      // Collect IDs of all items below the source in display order
+      const targetIds = new Set(
+        flatItems.slice(sourceIndex + 1).map((fi) => fi.qualityId)
+      );
+
+      // Apply source sizes to all target items
+      const newItems = items.value.map((item) => {
+        if ('quality' in item && targetIds.has(item.quality.id)) {
+          return {
+            ...item,
+            minSize: sourceMinSize,
+            maxSize: sourceMaxSize,
+            preferredSize: sourcePreferredSize,
+          };
+        }
+
+        if (!('quality' in item)) {
+          return {
+            ...item,
+            items: (item as QualityProfileGroup).items.map((subItem) => {
+              if (targetIds.has(subItem.quality.id)) {
+                return {
+                  ...subItem,
+                  minSize: sourceMinSize,
+                  maxSize: sourceMaxSize,
+                  preferredSize: sourcePreferredSize,
+                };
+              }
+
+              return subItem;
+            }),
+          };
+        }
+
+        return item;
+      });
+
+      updateValue('items', newItems);
+    },
+    [items, updateValue]
+  );
+
   const handleCreateGroupPress = useCallback(
     (qualityId: number) => {
       const groupId =
@@ -663,6 +761,7 @@ function EditQualityProfileModalContent({
                     onDragMove={handleDragMove}
                     onDragEnd={handleDragEnd}
                     onSizeChange={handleSizeChange}
+                    onCopySizesDown={handleCopySizesDown}
                   />
                 </div>
 

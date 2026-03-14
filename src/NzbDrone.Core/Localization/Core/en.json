@@ -201,6 +201,7 @@
   "Cancel": "Cancel",
   "CancelPendingTask": "Are you sure you want to cancel this pending task?",
   "CancelProcessing": "Cancel Processing",
+  "CopySizesToBelow": "Copy sizes to all qualities below",
   "Category": "Category",
   "CertificateValidation": "Certificate Validation",
   "CertificateValidationHelpText": "Change how strict HTTPS certification validation is. Do not change unless you understand the risks.",
