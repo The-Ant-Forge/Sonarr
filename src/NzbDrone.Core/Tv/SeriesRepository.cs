@@ -88,7 +88,7 @@ namespace NzbDrone.Core.Tv
 
         public List<Series> GetMonitored()
         {
-            return Query(s => s.Monitored);
+            return Query(s => s.Monitored == true);
         }
 
         public List<int> AllSeriesTvdbIds()
