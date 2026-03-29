@@ -195,8 +195,26 @@ A review document in `docs/Code-Review-YYMMDD.md` (or similar) with:
 - **Dependency updates**: Update all NuGet and Yarn dependencies to latest compatible versions
 - **Code review**: Thorough review covering performance, security, best practices, reliability, robustness, and unit tests
 
+## Git & Upstream
+
+### Repository status
+This is a **standalone repository** (detached from the GitHub fork of Sonarr/Sonarr). The `upstream` git remote is retained for cherry-picking useful commits. PRs are not sent upstream.
+
+### Remotes
+- `origin` → `The-Ant-Forge/Sonarr` (standalone)
+- `upstream` → `Sonarr/Sonarr` (reference for cherry-picks)
+
+### Incorporating upstream changes
+Cherry-pick individual commits rather than merging/rebasing, as the histories have diverged.
+
+```bash
+git fetch upstream
+git log main..upstream/main --oneline         # review new commits
+git cherry-pick <sha>                         # pick what we need
+```
+
 ## Relationship to Radarr
-Sonarr is the original *arr project (formerly NzbDrone). Radarr was forked from Sonarr for movies. Both share similar architecture, patterns, and the `NzbDrone.*` namespace. Work done here may inform upstream contributions. Radarr is at `D:\Dev\Radarr` on .NET 8; Sonarr is ahead on .NET 10.
+Sonarr is the original *arr project (formerly NzbDrone). Radarr was forked from Sonarr for movies. Both share similar architecture, patterns, and the `NzbDrone.*` namespace. Radarr is at `D:\Dev\Radarr` on .NET 8; Sonarr is ahead on .NET 10.
 
 ## Releases
 Before doing a release check that all primary documents are updated and current with respect to what you know of the changes made. This includes TODO.md, completed.md and readme.md (in the root). Then do a commit and push to capture those changes in the remote before starting the normal release procedure.
