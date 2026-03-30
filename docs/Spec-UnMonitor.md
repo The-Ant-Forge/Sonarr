@@ -18,9 +18,18 @@ A global setting **Unmonitor On Download** (default: off) in Settings > Media Ma
 
 ## Behaviour
 
-- **Trigger**: `EpisodeFileAddedEvent` — fires after every successful import (new download, quality upgrade, or manual import)
-- **Action**: If the setting is enabled, sets `episode.Monitored = false` for each affected episode in a single DB write alongside the file ID assignment
-- **Scope**: All downloads regardless of quality. No cutoff check — the intent is "I got it, stop looking."
+The setting triggers in two scenarios:
+
+### 1. On file import (`EpisodeFileAddedEvent`)
+
+- **Trigger**: Fires after every successful import (new download, quality upgrade, or manual import)
+- **Action**: Sets `episode.Monitored = false` for each affected episode in a single DB write alongside the file ID assignment
+
+### 2. On series add with existing files (`SeriesScannedHandler`)
+
+- **Trigger**: When a newly added series is scanned and existing episode files are found on disk
+- **Action**: After monitoring rules from add options are applied, unmonitors any episode that already has a file
+- **Purpose**: Prevents Sonarr from searching for and downloading inferior versions of episodes already in the library (e.g. when Overseerr adds a show the user already has)
 
 ### When it fires
 
@@ -29,6 +38,8 @@ A global setting **Unmonitor On Download** (default: off) in Settings > Media Ma
 | New download (any quality) | Unmonitored |
 | Upgrade import | Unmonitored |
 | Manual import | Unmonitored |
+| Series added, episodes already have files | Unmonitored |
+| Series added, episodes missing files | Stays monitored (searches normally) |
 | Setting is off | No change (existing behaviour) |
 
 ### Relationship to existing settings
@@ -62,11 +73,18 @@ Both API versions are maintained: V5 is used by the frontend; V3 is preserved fo
 |------|--------|
 | `EpisodeService.cs` | Check `UnmonitorOnDownload` in `Handle(EpisodeFileAddedEvent)` handler |
 | `EpisodeRepository.cs` | `SetFileId` extended with `bool unmonitor` parameter — combines file ID + monitored flag in a single `SetFields` call |
+| `SeriesScannedHandler.cs` | After add options monitoring rules are applied, unmonitor episodes with existing files when `UnmonitorOnDownload` is enabled |
 
-The handler:
+The `EpisodeFileAddedEvent` handler:
 1. Checks if `UnmonitorOnDownload` is enabled
 2. For each episode linked to the added file, calls `SetFileId(episode, fileId, unmonitor: true)` to set both fields atomically
 3. Single DB write per episode (matches `ClearFileId` pattern)
+
+The `SeriesScannedHandler` post-add logic:
+1. Normal monitoring rules from add options are applied first (e.g. "Monitor All")
+2. If `UnmonitorOnDownload` is enabled, queries all episodes for the series
+3. Any episode that is both monitored and has a file is unmonitored
+4. This runs before search commands are pushed, so searches only find genuinely missing episodes
 
 ### Frontend
 
@@ -80,7 +98,7 @@ The handler:
 | Key | Value |
 |-----|-------|
 | `UnmonitorOnDownload` | "Unmonitor On Download" |
-| `UnmonitorOnDownloadHelpText` | "Automatically unmonitor episodes once they are downloaded. Episodes can be re-monitored manually." |
+| `UnmonitorOnDownloadHelpText` | "Automatically unmonitor episodes once they are downloaded or when a newly added series already has the episode files on disk. Prevents searching for episodes you already have. Episodes can be re-monitored manually." |
 
 ## Testing
 

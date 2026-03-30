@@ -2165,7 +2165,7 @@
   "UnmonitorDeletedEpisodes": "Unmonitor Deleted Episodes",
   "UnmonitorDeletedEpisodesHelpText": "Episodes deleted from disk are automatically unmonitored in {appName}",
   "UnmonitorOnDownload": "Unmonitor On Download",
-  "UnmonitorOnDownloadHelpText": "Automatically unmonitor episodes once they are downloaded. Episodes can be re-monitored manually.",
+  "UnmonitorOnDownloadHelpText": "Automatically unmonitor episodes once they are downloaded or when a newly added series already has the episode files on disk. Prevents searching for episodes you already have. Episodes can be re-monitored manually.",
   "UnmonitorSelected": "Unmonitor Selected",
   "UnmonitorSpecialEpisodes": "Unmonitor Specials",
   "UnmonitorSpecialsEpisodesDescription": "Unmonitor all special episodes without changing the monitored status of other episodes",
