@@ -97,13 +97,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                 mediaInfoModel.RawStreamData = string.Concat(analysis.OutputData);
 
                 mediaInfoModel.AudioStreams = analysis.AudioStreams?
-                    .Where(stream => stream.Language.IsNotNullOrWhiteSpace())
                     .OrderBy(stream => stream.Index)
                     .Select(stream =>
                     {
                         var model = new MediaInfoAudioStreamModel
                         {
-                            Language = stream.Language,
+                            Language = stream.Language.IsNotNullOrWhiteSpace() ? stream.Language : "und",
                             Format = stream.CodecName,
                             CodecId = stream.CodecTagString,
                             Profile = stream.Profile,
@@ -122,13 +121,12 @@ namespace NzbDrone.Core.MediaFiles.MediaInfo
                     .ToList();
 
                 mediaInfoModel.SubtitleStreams = analysis.SubtitleStreams?
-                    .Where(stream => stream.Language.IsNotNullOrWhiteSpace())
                     .OrderBy(stream => stream.Index)
                     .Select(stream =>
                     {
                         var model = new MediaInfoSubtitleStreamModel
                         {
-                            Language = stream.Language,
+                            Language = stream.Language.IsNotNullOrWhiteSpace() ? stream.Language : "und",
                             Format = stream.CodecName,
                         };
 
