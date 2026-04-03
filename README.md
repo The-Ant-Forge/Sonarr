@@ -27,11 +27,16 @@ Sonarr is a PVR for Usenet and BitTorrent users. It can monitor multiple RSS fee
 - **Silent error in DelayProfileService** — Now throws `NotFoundException` instead of returning silently ([spec 5.2](docs/spec-code-review-260310.md))
 - **X509 certificate validation tests** — New test suite for previously-untested security-critical code ([spec 8.2](docs/spec-code-review-260310.md))
 - **Media info caching** — `VideoFileInfoReader` now caches ffprobe results by path/mtime/size to avoid redundant reads ([spec 10.1](docs/spec-code-review-260310.md))
+- **Media info language handling** — Audio/subtitle streams without language tags are no longer silently dropped during import; defaults to "und" (undetermined)
+- **WhereBuilder crash fix** — `GetMonitored()` query with bare boolean expression no longer crashes SQLite WhereBuilder
+- **Parser null reference fix** — `FindByTvdbId()` null result no longer causes crash in release parsing
+- **MediaInfoFormatter null guards** — Files where FFprobe returns null PrimaryAudioStream no longer crash during import
+- **Quality profile size UX** — Removed auto-adjustment feedback loops, added debounce for number inputs, better slider curve for AV1/x265, reduced max to 100 MiB/min
 - **Frontend initialization guard** — `window.Sonarr` access protected against race conditions ([spec 11.3](docs/spec-code-review-260310.md))
 
-### New feature: auto-unmonitor on cutoff
+### New feature: UnmonitorOnDownload
 
-- **Disable monitoring when quality cutoff is met** — Series and episodes can be automatically unmonitored once the desired quality is reached, similar to Radarr's implementation. See [Spec-UnMonitor.md](docs/Spec-UnMonitor.md)
+- **Auto-unmonitor episodes on download** — Episodes are automatically unmonitored once downloaded or when a newly added series already has files on disk (e.g. from Overseerr). Ended series with all episodes present are fully unmonitored. See [Spec-UnMonitor.md](docs/Spec-UnMonitor.md)
 
 ### Dependency modernization
 
@@ -52,10 +57,11 @@ Removed **20+ frontend dependencies** by replacing with native browser APIs and 
 - `polyfills.js` → removed entirely (console shims, `Object.groupBy`)
 - `jquery` → native `fetch` API
 - `redux-localstorage` → inlined store enhancer
+- `mobile-detect` → inlined userAgent regex (55KB saved)
 
 **Major upgrades:**
 - ESLint 8→9 (flat config), Prettier 2→3, Stylelint 15→17
-- NLog 5→6, Sentry SDK 5→6, `@sentry/browser` 7→10
+- NLog 5→6.1.2, Sentry SDK 5→6.3.0, `@sentry/browser` 7→10.47
 - Ical.Net 5, Selenium 4, RestSharp 114, NUnit 4, FluentAssertions 8
 - All NuGet and Yarn packages bumped to latest safe versions
 
@@ -80,6 +86,7 @@ A comprehensive 17-category code review covering security, correctness, and main
 | [docs/spec-code-review-260310.md](docs/spec-code-review-260310.md) | Full code review findings (17 categories, 3 lanes) |
 | [docs/Spec-Dependency-Update.md](docs/Spec-Dependency-Update.md) | Dependency audit and upgrade plan |
 | [docs/Spec-UnMonitor.md](docs/Spec-UnMonitor.md) | Auto-unmonitor feature specification |
+| [docs/Spec-CodeReview.md](docs/Spec-CodeReview.md) | Code review checklist and process |
 
 ## Getting Started
 
@@ -156,4 +163,4 @@ Thank you to [<img src="https://resources.jetbrains.com/storage/products/company
 ### Licenses
 
 - [GNU GPL v3](http://www.gnu.org/licenses/gpl.html)
-- Copyright 2010-2025
+- Copyright 2010-2026

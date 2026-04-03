@@ -50,7 +50,9 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 
 - [x] Code review spec (see `docs/spec-code-review-260310.md`)
 - [x] Code review implementation (Lanes A → B → C per spec) — All 3 lanes complete (8+14+11 = 33 items)
-- [x] Unmonitor feature refinements — Renamed to `UnmonitorOnDownload` with new DB key, simplified to unconditional unmonitor, single DB write, spec updated
+- [x] Unmonitor feature refinements — Renamed to `UnmonitorOnDownload` with new DB key, simplified to unconditional unmonitor, single DB write, spec updated. Extended to handle existing files on series add and auto-unmonitor completed ended series.
 - [x] Deploy script testing with `bin/` directory layout — Deployed successfully, stale flat-layout cleanup verified
+- [x] Media info import fixes — Fixed VideoFileInfoReader dropping audio/subtitle streams without language tags; added null guards in MediaInfoFormatter
+- [x] WhereBuilder and ParsingService null ref fixes — SQLite bare boolean crash and null series dereference
 - [ ] **Test fixtures for new features** — `HandleEpisodeFileAddedFixture`, `RefreshSeriesService` monitored-only tests, `DiskScanService.Execute` tests
 - [ ] **Second code review items** — see `docs/Code-Review-260313.md` Lane D (deferred test coverage)
