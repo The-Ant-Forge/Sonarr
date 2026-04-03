@@ -115,15 +115,14 @@ Before committing, check if `docs/`, `README.md` and `CLAUDE.md` need updating t
 
 ### Versioning convention
 
-Tags follow the pattern `v{upstream}-antforge.{n}`:
+Tags follow the pattern `v{upstream}-antforge.{commit-count}`:
 
 | Tag | Meaning |
 |---|---|
-| `v3.1.0-antforge.1` | Our 1st release, rooted in upstream v3.1.0 source |
-| `v3.1.0-antforge.2` | Our 2nd release, still rooted in v3.1.0 |
-| `v3.2.0-antforge.3` | After cherry-picking from upstream v3.2.0 |
+| `v4.0.17-antforge.80` | 80 of our own commits, rooted in upstream v4.0.17 |
+| `v4.0.18-antforge.95` | After cherry-picking from upstream v4.0.18 |
 
-The upstream version part reflects which source base we are aligned with. The `antforge.N` counter reflects our own commit cadence on top of it. When we cherry-pick from a new upstream release, bump the upstream part and keep our commit count.
+The upstream version part reflects which stable release we're aligned with. The `antforge.N` counter is the number of our own commits (`git log --oneline v5-develop --not --remotes=upstream | wc -l`). When cherry-picking from a new upstream release, bump the upstream part.
 
 ### Documentation or commentary
 Never use real TV show names. Always make up example ones.
