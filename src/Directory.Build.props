@@ -108,6 +108,8 @@
     <SentryProject></SentryProject>
     <SentryUrl></SentryUrl> <!--  If empty, assumed to be sentry.io -->
     <SentryAuthToken></SentryAuthToken> <!-- Use env var instead: SENTRY_AUTH_TOKEN -->
+    <!-- Disable sentry-cli invocation when auth token is not configured -->
+    <SentryCli Condition="'$(SentryAuthToken)' == ''">false</SentryCli>
 
     <!-- Source Link settings -->
     <!-- https://github.com/dotnet/sourcelink/blob/main/docs/README.md#publishrepositoryurl -->
@@ -120,7 +122,7 @@
   <!-- Standard testing packages -->
   <ItemGroup Condition="'$(TestProject)'=='true'">
     <PackageReference Include="coverlet.collector" Version="8.0.1" />
-    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.2" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="NUnit" Version="4.5.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
