@@ -105,7 +105,7 @@ namespace NzbDrone.Core.SeriesStats
                 .Select(@"""SeriesId"",
                             ""SeasonNumber"",
                             SUM(COALESCE(""Size"", 0)) AS SizeOnDisk,
-                            string_agg(""ReleaseGroup"", '|') AS ReleaseGroupsString")
+                            string_agg(DISTINCT ""ReleaseGroup"", '|') AS ReleaseGroupsString")
                 .GroupBy<EpisodeFile>(x => x.SeriesId)
                 .GroupBy<EpisodeFile>(x => x.SeasonNumber);
         }
