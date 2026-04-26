@@ -21,7 +21,7 @@ Core logic is in `NzbDrone.Core/`, APIs in `Sonarr.Api.V3/` (stable) and `Sonarr
 - Test projects mirror source (`NzbDrone.Core.Test/` tests `NzbDrone.Core/`)
 
 ## Prerequisites
-- **.NET 10 SDK** v10.0.103 (pinned in `global.json`; project targets `net10.0`)
+- **.NET 10 SDK** v10.0.203 (pinned in `global.json`; project targets `net10.0`)
 - **Visual Studio 2022** v17.8+ or Rider (or VS Code with C# Dev Kit)
 - **Node.js 24.x** (upstream pins 20.x but we use 24 — works fine)
 - **Yarn 1.22.x** (Classic): `npm install -g yarn`
