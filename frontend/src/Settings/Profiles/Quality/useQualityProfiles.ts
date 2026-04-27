@@ -73,7 +73,7 @@ export const useManageQualityProfile = (
   id: number | undefined,
   cloneId: number | undefined
 ) => {
-  const { schema, isSchemaFetching, isSchemaFetched, schemaError } =
+  const { schema, isSchemaLoading, isSchemaFetched, schemaError } =
     useQualityProfileSchema(cloneId == null);
 
   const profile = useQualityProfile(cloneId);
@@ -98,7 +98,7 @@ export const useManageQualityProfile = (
 
   return {
     ...manage,
-    isSchemaFetching: cloneId ? false : isSchemaFetching,
+    isSchemaLoading: cloneId ? false : isSchemaLoading,
     isSchemaFetched: cloneId ? true : isSchemaFetched,
     schemaError: cloneId ? undefined : schemaError,
   };
@@ -114,7 +114,7 @@ export const useDeleteQualityProfile = (id: number) => {
 };
 
 export const useQualityProfileSchema = (enabled: boolean) => {
-  const { isFetching, isFetched, error, data } =
+  const { isLoading, isFetched, error, data } =
     useApiQuery<QualityProfileModel>({
       path: `${PATH}/schema`,
       queryOptions: {
@@ -123,7 +123,7 @@ export const useQualityProfileSchema = (enabled: boolean) => {
     });
 
   return {
-    isSchemaFetching: isFetching,
+    isSchemaLoading: isLoading,
     isSchemaFetched: isFetched,
     schemaError: error,
     schema: data ?? ({} as QualityProfileModel),
