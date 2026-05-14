@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Tv
 
             if (addOptions == null)
             {
-                _episodeRefreshedService.Search(series.Id);
+                _episodeRefreshedService.Search(series);
 
                 // For existing series (not newly added), check if an ended series
                 // is now complete and can be fully unmonitored.
