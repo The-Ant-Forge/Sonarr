@@ -65,7 +65,7 @@ interface Section {
   suggestions: SeriesSuggestion[] | AddNewSeriesSuggestion[];
 }
 
-function useSeriesSuggestions(tagList: Tag[]) {
+function useSeriesSuggestions(tagList: ReadonlyArray<Tag>) {
   const { data: allSeries = [] } = useSeries();
 
   return useMemo(() => {
