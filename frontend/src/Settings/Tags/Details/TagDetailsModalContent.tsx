@@ -12,14 +12,20 @@ import ModalFooter from 'Components/Modal/ModalFooter';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import { kinds } from 'Helpers/Props';
 import useSeries from 'Series/useSeries';
+import { useImportListsWithIds } from 'Settings/ImportLists/ImportLists/useImportLists';
 import { useIndexersWithIds } from 'Settings/Indexers/useIndexers';
 import { useConnectionsWithIds } from 'Settings/Notifications/useConnections';
+import { useDelayProfilesWithIds } from 'Settings/Profiles/Delay/useDelayProfiles';
 import { useReleaseProfilesWithIds } from 'Settings/Profiles/Release/useReleaseProfiles';
+import { useAutoTaggingsWithIds } from 'Settings/Tags/AutoTagging/useAutoTaggings';
 import translate from 'Utilities/String/translate';
 import TagDetailsDelayProfile from './TagDetailsDelayProfile';
 import styles from './TagDetailsModalContent.css';
 
-function findMatchingItems<T extends ModelBase>(ids: number[], items: T[]) {
+function findMatchingItems<T extends ModelBase>(
+  ids: number[],
+  items: ReadonlyArray<T>
+) {
   return items.filter((s) => {
     return ids.includes(s.id);
   });
@@ -84,19 +90,9 @@ function TagDetailsModalContent({
 }: TagDetailsModalContentProps) {
   const series = useMatchingSeries(seriesIds);
 
-  const delayProfiles = useSelector(
-    createMatchingItemSelector(
-      delayProfileIds,
-      (state: AppState) => state.settings.delayProfiles.items
-    )
-  );
+  const delayProfiles = useDelayProfilesWithIds(delayProfileIds);
 
-  const importLists = useSelector(
-    createMatchingItemSelector(
-      importListIds,
-      (state: AppState) => state.settings.importLists.items
-    )
-  );
+  const importLists = useImportListsWithIds(importListIds);
 
   const releaseProfiles = useReleaseProfilesWithIds(releaseProfileIds);
   const notifications = useConnectionsWithIds(notificationIds);
@@ -109,12 +105,7 @@ function TagDetailsModalContent({
     )
   );
 
-  const autoTags = useSelector(
-    createMatchingItemSelector(
-      autoTagIds,
-      (state: AppState) => state.settings.autoTaggings.items
-    )
-  );
+  const autoTags = useAutoTaggingsWithIds(autoTagIds);
 
   return (
     <ModalContent onModalClose={onModalClose}>

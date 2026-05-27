@@ -59,6 +59,16 @@ dotnet run --project src/NzbDrone.Console/Sonarr.Console.csproj
 
 Both modes use `deploy.sh` which copies `_output/net10.0-windows/*` → `bin/` and `_output/UI/*` → `bin/UI/`.
 
+**⚠️ Tray app build gotcha:** `dotnet build src/Sonarr.sln -c Release` does **not** refresh `_output/net10.0-windows/`. The libraries get rebuilt to `_output/net10.0/`, but the tray-app project (`net10.0-windows` target) cached older copies of `Sonarr.Api.V5.dll` etc. into its own output directory. **Before every deploy that includes backend changes, run:**
+
+```bash
+dotnet build src/Sonarr.sln -c Release
+dotnet build src/NzbDrone/Sonarr.csproj -c Release -p:EnableAnalyzers=false  # refreshes net10.0-windows
+bash deploy.sh
+```
+
+Symptom of skipping the tray build: API endpoints added recently return `404 Not Found` while existing ones work, and `_output/net10.0-windows/Sonarr.Api.V5.dll` has an older timestamp than `_output/net10.0/Sonarr.Api.V5.dll`.
+
 ```bash
 # Standard deploy — wipes bin/, copies fresh build. Preserves config, database, logs, backups.
 bash deploy.sh
