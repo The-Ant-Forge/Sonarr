@@ -22,15 +22,9 @@ Each is a Very High effort project warranting its own spec document.
 | **React 18→19** | Very High | Many | After router | `react-window` v2 requires React 19 |
 | **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions`. Peer-warns under React 18. |
 
-## Minor Frontend Dep Refresh
+## Minor Frontend Dep Refresh ✅ Done (2026-05-28)
 
-Surfaced by `yarn install` peer warnings during the v7 migration. Low-risk, low-effort, candidate for a single batched PR after PR 2 completes:
-
-| Package | Our version | Latest | Notes |
-|---|---|---|---|
-| `react-slider` | 1.1.4 | 2.x | Used in `QualityProfileItemSize.tsx` (our `55b89d427` UX work). Peer-warns against React 18. Blocker for any React 19 move. |
-| `react-dnd-multi-backend` | 8.1.2 | latest | Unmet peer `dnd-core@^16.0.1`. Likely lock-step bump alongside `react-dnd`. |
-| `rdndmb-html5-to-touch` | 8.1.2 | latest | Same peer issue as above; ships from same family. |
+Done in commit `9ebe6114e`. `react-slider` bumped 1.1.4 → 2.0.6, `react-dnd-multi-backend` and `rdndmb-html5-to-touch` bumped 8.1.2 → 9.0.0, explicit `dnd-core 16.0.1` added to satisfy peer declarations. Only remaining peer warning is `react-redux@7.2.4`, which is tracked above as a Very High effort upgrade.
 
 ## Code Review Deferred Items
 
