@@ -20,7 +20,6 @@ function IndexerFlagsSelectInput({
   const value = useMemo(
     () =>
       allIndexerFlags.reduce((acc: number[], { id }) => {
-        // eslint-disable-next-line no-bitwise
         if ((indexerFlags & id) === id) {
           acc.push(id);
         }
