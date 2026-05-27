@@ -22,10 +22,6 @@ Each is a Very High effort project warranting its own spec document.
 | **React 18→19** | Very High | Many | After router | `react-window` v2 requires React 19 |
 | **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions`. Peer-warns under React 18. |
 
-## Minor Frontend Dep Refresh ✅ Done (2026-05-28)
-
-Done in commit `9ebe6114e`. `react-slider` bumped 1.1.4 → 2.0.6, `react-dnd-multi-backend` and `rdndmb-html5-to-touch` bumped 8.1.2 → 9.0.0, explicit `dnd-core 16.0.1` added to satisfy peer declarations. Only remaining peer warning is `react-redux@7.2.4`, which is tracked above as a Very High effort upgrade.
-
 ## Code Review Deferred Items
 
 From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
