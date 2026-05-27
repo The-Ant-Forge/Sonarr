@@ -41,7 +41,7 @@ export const defaultState = {
   downloadClientOptions: downloadClientOptions.defaultState,
   importLists: importLists.defaultState,
   importListExclusions: importListExclusions.defaultState,
-  importListOptions: importListOptions.defaultState
+  importListOptions: importListOptions.defaultState,
 };
 
 export const persistState = ['settings.importListExclusions.pageSize'];
@@ -59,22 +59,25 @@ export const actionHandlers = handleThunks({
   ...downloadClientOptions.actionHandlers,
   ...importLists.actionHandlers,
   ...importListExclusions.actionHandlers,
-  ...importListOptions.actionHandlers
+  ...importListOptions.actionHandlers,
 });
 
 //
 // Reducers
 
-export const reducers = createHandleActions({
-  ...autoTaggingSpecifications.reducers,
-  ...autoTaggings.reducers,
-  ...customFormatSpecifications.reducers,
-  ...customFormats.reducers,
-  ...delayProfiles.reducers,
-  ...downloadClients.reducers,
-  ...downloadClientOptions.reducers,
-  ...importLists.reducers,
-  ...importListExclusions.reducers,
-  ...importListOptions.reducers
-
-}, defaultState, section);
+export const reducers = createHandleActions(
+  {
+    ...autoTaggingSpecifications.reducers,
+    ...autoTaggings.reducers,
+    ...customFormatSpecifications.reducers,
+    ...customFormats.reducers,
+    ...delayProfiles.reducers,
+    ...downloadClients.reducers,
+    ...downloadClientOptions.reducers,
+    ...importLists.reducers,
+    ...importListExclusions.reducers,
+    ...importListOptions.reducers,
+  },
+  defaultState,
+  section
+);

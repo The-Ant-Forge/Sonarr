@@ -18,9 +18,19 @@ Each is a Very High effort project warranting its own spec document.
 | Item | Effort | Files | Blocker | Notes |
 |---|---|---|---|---|
 | **FluentValidation 9→12** | Very High | 253+ | None | Mechanical: `RuleFor` API changes, validator registration |
-| **react-router 5→7** | Very High | Many | Before React 19 | Paradigm shift to data routers; removes `connected-react-router`, `history` |
+| ~~**react-router 5→7**~~ | ~~Very High~~ | ~~Many~~ | — | **In progress** — see `docs/Spec-React-v7-Migration.md` (PR 1 of 2) |
 | **React 18→19** | Very High | Many | After router | `react-window` v2 requires React 19 |
-| **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions` |
+| **redux 4→5 / react-redux 7→9** | Very High | Many | Independent | Also affects `redux-actions`, `redux-thunk`, `reselect`, `redux-batched-actions`. Peer-warns under React 18. |
+
+## Minor Frontend Dep Refresh
+
+Surfaced by `yarn install` peer warnings during the v7 migration. Low-risk, low-effort, candidate for a single batched PR after PR 2 completes:
+
+| Package | Our version | Latest | Notes |
+|---|---|---|---|
+| `react-slider` | 1.1.4 | 2.x | Used in `QualityProfileItemSize.tsx` (our `55b89d427` UX work). Peer-warns against React 18. Blocker for any React 19 move. |
+| `react-dnd-multi-backend` | 8.1.2 | latest | Unmet peer `dnd-core@^16.0.1`. Likely lock-step bump alongside `react-dnd`. |
+| `rdndmb-html5-to-touch` | 8.1.2 | latest | Same peer issue as above; ships from same family. |
 
 ## Code Review Deferred Items
 

@@ -53,7 +53,9 @@ function thumbRenderer(props: HTMLProps<HTMLDivElement>) {
 }
 
 function toSlider(value: number | null, defaultValue: number): number {
-  return roundNumber(value ? Math.pow(value, 1 / SLIDER_EXPONENT) : defaultValue);
+  return roundNumber(
+    value ? Math.pow(value, 1 / SLIDER_EXPONENT) : defaultValue
+  );
 }
 
 function fromSlider(sliderValue: number): number {
@@ -201,7 +203,11 @@ export default function QualityProfileItemSize({
         max={SLIDER_MAX}
         step={STEP_SIZE}
         minDistance={0}
-        value={[sliderSizes.minSize, sliderSizes.preferredSize, sliderSizes.maxSize]}
+        value={[
+          sliderSizes.minSize,
+          sliderSizes.preferredSize,
+          sliderSizes.maxSize,
+        ]}
         withTracks={true}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore allowCross is still available in the version currently used

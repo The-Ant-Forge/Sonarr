@@ -256,7 +256,11 @@ function EditQualityProfileModalContent({
           flatItems.push({ qualityId: item.quality.id });
         } else {
           // Group: sub-items are also reversed in display
-          for (let j = (item as QualityProfileGroup).items.length - 1; j >= 0; j--) {
+          for (
+            let j = (item as QualityProfileGroup).items.length - 1;
+            j >= 0;
+            j--
+          ) {
             flatItems.push({
               qualityId: (item as QualityProfileGroup).items[j].quality.id,
             });
