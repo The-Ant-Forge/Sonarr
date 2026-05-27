@@ -2,7 +2,7 @@
 
 ## Known Issues
 
-_No known test failures. All 5,645 unit tests passing as of 2026-03-10._
+_No known test failures. All 5,682 unit tests passing as of 2026-05-27 (after upstream cherry-pick sweep)._
 
 ### Resolved Issues
 
