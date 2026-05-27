@@ -77,7 +77,7 @@ export function getValidationFailures(
 
 export function addOrUpdateQueryClientItem<
   T extends ModelBase,
-  K extends keyof T
+  K extends keyof T,
 >(oldData: T[] = [], newItem: T, key: K) {
   const existingIndex = oldData.findIndex((item) => item[key] === newItem[key]);
 
