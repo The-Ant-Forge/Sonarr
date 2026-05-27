@@ -195,8 +195,6 @@ export default function QualityProfileItemSize({
 
   return (
     <div className={styles.sizeLimit}>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore React version mismatch */}
       <ReactSlider
         className={styles.slider}
         min={MIN}
@@ -209,9 +207,6 @@ export default function QualityProfileItemSize({
           sliderSizes.maxSize,
         ]}
         withTracks={true}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore allowCross is still available in the version currently used
-        allowCross={false}
         snapDragDisabled={true}
         pearling={false}
         renderThumb={thumbRenderer}
