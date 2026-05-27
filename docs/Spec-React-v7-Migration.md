@@ -169,8 +169,17 @@ These are antforge-only features that must not regress with the router upgrade.
 
 | Step | Action | Assertion |
 |---|---|---|
-| 5.1 | After full test run: `browser_console_messages` | Zero `error` or `warn` entries beyond known noise. Capture any new ones. |
+| 5.1 | After full test run: `browser_console_messages` | No new `error`/`warn` entries beyond the known-noise baseline below. Anything else: capture + investigate. |
 | 5.2 | `browser_network_requests` | No 4xx/5xx on routing-related requests (HTML, JS chunks, /api/v5/series, /api/v5/calendar) |
+
+**Known-noise baseline** (documented from the PR 1 and PR 2 smoke runs — anything outside this list is real):
+
+| Source | Pattern | Why it happens |
+|---|---|---|
+| Sentry telemetry | `Access to fetch at 'https://sentry.sonarr.tv/api/12/envelope/...' has been blocked by CORS policy` (often paired with `Failed to load resource: net::ERR_FAILED`) | Sentry's ingest endpoint doesn't return `Access-Control-Allow-Origin` for `localhost:9103`. Fires once per route navigation. Harmless in dev. |
+| SignalR idle | `[signalR] Connection disconnected with error 'Server timeout elapsed without receiving a message from the server.'` | The real-time channel times out if the client sits idle. Reconnects automatically. |
+| SignalR mid-deploy | `[signalR] Failed to start the connection: Error: Failed to complete negotiation with the server` (with `net::ERR_CONNECTION_REFUSED`) | Appears if the page stays open while Sonarr is restarted (e.g. mid-deploy). One-time per restart. |
+| Localization | Up to ~80 `Missing translation for key: X` warnings on certain pages | Translation gaps in `en.json`. Tracked separately, not migration-related. |
 
 **Failure handling**
 

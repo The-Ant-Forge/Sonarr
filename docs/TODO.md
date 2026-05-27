@@ -66,4 +66,3 @@ From the 2026-03-10 code review (`docs/spec-code-review-260310.md`):
 - [x] WhereBuilder and ParsingService null ref fixes — SQLite bare boolean crash and null series dereference
 - [ ] **Test fixtures for new features** — `HandleEpisodeFileAddedFixture`, `RefreshSeriesService` monitored-only tests, `DiskScanService.Execute` tests
 - [ ] **Second code review items** — see `docs/Code-Review-260313.md` Lane D (deferred test coverage)
-- [ ] **Port `includeSpecials` filter to v5 Wanted Missing endpoint** — During the PR 2 cherry-pick chain (`f4a160cb2 TypedResults for API v5 endpoints`), we kept HEAD's signature to avoid a side-quest. The v5 `/api/v5/wanted/missing` endpoint is missing the `includeSpecials = true` parameter and the corresponding `EpisodesWithoutFiles(spec, includeSpecials)` body change that upstream has. The v3 endpoint already supports it. Single-file change in `src/Sonarr.Api.V5/Wanted/MissingController.cs`.
